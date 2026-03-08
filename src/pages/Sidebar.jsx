@@ -24,14 +24,14 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
       <NavLink
         to={to}
         className={({ isActive }) =>
-          `w-full px-4 py-3 rounded-2xl flex items-center group transition-all duration-200 ${isActive ? "bg-white text-black" : "text-white hover:bg-neutral-800"
+          `w-full px-4 py-3 rounded-2xl flex items-center group transition-all duration-200 ${isActive ? "bg-[#5B2EFF] text-white" : "text-white hover:bg-neutral-800"
           }`
         }
       >
         {({ isActive }) => (
           <>
             <Icon
-              className={`mr-3 size-5 ${isActive ? "text-black" : "group-hover:text-white"
+              className={`mr-3 size-5 ${isActive ? "text-white" : "group-hover:text-white"
                 }`}
             />
             {sidebarVisible && <span className="font-medium">{label}</span>}
