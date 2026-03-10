@@ -13,6 +13,7 @@ import { BiCategory } from "react-icons/bi";
 import { FiShoppingBag } from "react-icons/fi";
 import { AiOutlineDollarCircle } from "react-icons/ai";
 import logo from "../assets/images/logo.png"
+import { Monitor, MonitorCloud } from "lucide-react";
 
 const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
           />
           <SidebarItem
             to="/studio-details"
-            icon={IoDocumentTextOutline}
+            icon={MonitorCloud}
             label="Studio Details"
           />
           <SidebarItem
