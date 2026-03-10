@@ -4,6 +4,7 @@ import { Search, } from "lucide-react";
 import { Pagination } from "../components/Pagination";
 import { Table, Avatar, Tag, Space, Button, Tooltip } from 'antd';
 import { MailOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import RecentUsersTable from "../components/RecentUserTable/RecentUserTable";
 
 export default function UserManagement() {
   // --- STATE ---
@@ -13,125 +14,55 @@ export default function UserManagement() {
 
 
 
-  const users = [
-    {
-      key: '1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '+880 1840560614',
-      location: '123 Main St, New York',
-      joined: 'Jan 15, 2024',
-      status: 'Active',
-      avatar: 'https://i.pravatar.cc/40?u=john1', 
-    },
-    {
-      key: '2',
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '+880 1840560614',
-      location: '123 Main St, New York',
-      joined: 'Jan 15, 2024',
-      status: 'Suspended',
-      avatar: 'https://i.pravatar.cc/40?u=john2',
-    },
-    {
-      key: '3',
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '+880 1840560614',
-      location: '123 Main St, New York',
-      joined: 'Jan 15, 2024',
-      status: 'Active',
-      avatar: 'https://i.pravatar.cc/40?u=john3',
-    },
-    {
-      key: '4',
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '+880 1840560614',
-      location: '123 Main St, New York',
-      joined: 'Jan 15, 2024',
-      status: 'Suspended',
-      avatar: 'https://i.pravatar.cc/40?u=john4',
-    },
-    {
-      key: '5',
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '+880 1840560614',
-      location: '123 Main St, New York',
-      joined: 'Jan 15, 2024',
-      status: 'Suspended',
-      avatar: 'https://i.pravatar.cc/40?u=john5',
-    },
-  ];
 
-  const columns = [
-    {
-      title: '#',
-      key: 'index',
-      width: 60,
-      render: (_, __, index) => index + 1,
-      align: 'center',
-    },
-    {
-      title: 'User',
-      key: 'user',
-      render: (_, record) => (
-        <Space>
-          <Avatar src={record.avatar} size={40} />
-          <div>
-            <div style={{ fontWeight: 500 }}>{record.name}</div>
-            <div style={{ color: '#888', fontSize: '13px' }}>{record.email}</div>
-          </div>
-        </Space>
-      ),
-    },
-    {
-      title: 'Phone Number',
-      dataIndex: 'phone',
-      key: 'phone',
-    },
-    {
-      title: 'Location',
-      dataIndex: 'location',
-      key: 'location',
-    },
-    {
-      title: 'Joined',
-      dataIndex: 'joined',
-      key: 'joined',
-      width: 120,
-    },
-    {
-      title: 'Status',
-      key: 'status',
-      width: 120,
-      render: (_, record) => {
-        const color = record.status === 'Active' ? 'success' : 'error';
-        return <Tag color={color}>{record.status.toUpperCase()}</Tag>;
-      },
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 120,
-      align: 'center',
-      render: () => (
-        <Space size="middle">
-          <Tooltip title="Send email">
-            <Button type="text" icon={<MailOutlined />} />
-          </Tooltip>
-          <Tooltip title="Activate">
-            <Button type="text" icon={<CheckOutlined style={{ color: '#52c41a' }} />} />
-          </Tooltip>
-          <Tooltip title="Suspend">
-            <Button type="text" icon={<CloseOutlined style={{ color: '#ff4d4f' }} />} />
-          </Tooltip>
-        </Space>
-      ),
-    },
-  ];
+const users = [
+  {
+    key: "1",
+    name: "John Smith",
+    email: "john@example.com",
+    phone: "+880 1840560614",
+    location: "123 Main St, New York",
+    joined: "Jan 15, 2024",
+    status: "Active",
+  },
+  {
+    key: "2",
+    name: "John Smith",
+    email: "john@example.com",
+    phone: "+880 1840560614",
+    location: "123 Main St, New York",
+    joined: "Jan 15, 2024",
+    status: "Suspended",
+  },
+  {
+    key: "3",
+    name: "John Smith",
+    email: "john@example.com",
+    phone: "+880 1840560614",
+    location: "123 Main St, New York",
+    joined: "Jan 15, 2024",
+    status: "Active",
+  },
+  {
+    key: "4",
+    name: "John Smith",
+    email: "john@example.com",
+    phone: "+880 1840560614",
+    location: "123 Main St, New York",
+    joined: "Jan 15, 2024",
+    status: "Active",
+  },
+  {
+    key: "5",
+    name: "John Smith",
+    email: "john@example.com",
+    phone: "+880 1840560614",
+    location: "123 Main St, New York",
+    joined: "Jan 15, 2024",
+    status: "Active",
+  },
+];
+
 
 
   return (
@@ -167,7 +98,7 @@ export default function UserManagement() {
           />
         </div>
         <div className="flex gap-5">
-          <button className="bg-[#1A435C] text-white whitespace-nowrap px-4 py-2 rounded-lg">
+          <button className="bg-[#5B2EFF] text-white whitespace-nowrap px-4 py-2 rounded-lg">
             All Users
           </button>
           <button className="bg-[#E8ECEF] text-slate-700 whitespace-nowrap px-4 py-2 rounded-lg">
@@ -182,14 +113,7 @@ export default function UserManagement() {
 
 
 
-      <Table
-        columns={columns}
-        dataSource={users}
-        pagination={false}
-        rowClassName={(record) =>
-          record.status === 'Suspended' ? 'suspended-row' : ''
-        }
-      />
+     <RecentUsersTable users={users} />
       <div className="mt-5">
         <Pagination
           currentPage={currentPage}

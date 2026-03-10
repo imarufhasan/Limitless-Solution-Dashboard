@@ -8,7 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import VerifyCodePage from "./pages/VerifyCodePage";
 import SetNewPasswordPage from "./pages/SetNewPasswordPage";
-import Layout from "./pages/Layout"; // Import Layout
+import Layout from "./pages/Layout"; 
 import DashboardPage from "./pages/Dashboard";
 import AccountSettings from "./pages/AccountSettings";
 import EditProfile from "./pages/EditProfile";
@@ -17,9 +17,6 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import UserManagement from "./pages/UserManagement";
 import ProductManagement from "./pages/ProductManagement/ProductManagement";
 import Order from "./pages/Order/Order";
-import PaymentManagement from "./pages/PaymentManagement/PaymentManagement";
-import CategoryLocker from "./pages/CategoryLocker/CategoryLocker";
-import MessagePage from "./pages/MessagePage/messagePage";
 function App() {
   return (
     <Router>
@@ -45,7 +42,7 @@ function App() {
         />
       
         <Route
-          path="/users"
+          path="/user-management"
           element={
             <Layout>
               <UserManagement/>
@@ -53,7 +50,7 @@ function App() {
           }
         />
         <Route
-          path="/products"
+          path="/studio-details"
           element={
             <Layout>
               <ProductManagement/>
@@ -62,38 +59,15 @@ function App() {
         />
       
         <Route
-          path="/orders"
+          path="/pending-projects"
           element={
             <Layout>
               <Order/>
             </Layout>
           }
         />
-        <Route
-          path="/category-locker"
-          element={
-            <Layout>
-              <CategoryLocker/>
-            </Layout>
-          }
-        />
-        <Route
-          path="/message"
-          element={
-            <Layout>
-              <MessagePage/>
-            </Layout>
-          }
-        />
-      
-        <Route
-          path="/payment-management"
-          element={
-            <Layout>
-              <PaymentManagement/>
-            </Layout>
-          }
-        />
+     
+     
       
        
         <Route

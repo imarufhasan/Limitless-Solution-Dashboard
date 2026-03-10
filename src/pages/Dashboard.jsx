@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import {
-  BookOpen,
   Users,
-  FileText,
-  Layout,
   ChevronDown,
-  Upload,
-  Sparkles,
+  UserCheck,
+  Monitor,
+  UserRoundX,
 } from "lucide-react";
 import {
   AreaChart,
@@ -19,13 +17,39 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import RecentOrdersTable from "../components/RecentOrderTable/RecentOrderTable";
+import RecentUsersTable from "../components/RecentUserTable/RecentUserTable";
 
 const DashboardPage = () => {
 
-
-
-
+const users = [
+    {
+      key: "1",
+      name: "John Smith",
+      email: "john@example.com",
+      phone: "+880 1840560614",
+      location: "123 Main St, New York",
+      joined: "Jan 15, 2024",
+      status: "Active",
+    },
+    {
+      key: "2",
+      name: "John Smith",
+      email: "john@example.com",
+      phone: "+880 1840560614",
+      location: "123 Main St, New York",
+      joined: "Jan 15, 2024",
+      status: "Suspended",
+    },
+    {
+      key: "3",
+      name: "John Smith",
+      email: "john@example.com",
+      phone: "+880 1840560614",
+      location: "123 Main St, New York",
+      joined: "Jan 15, 2024",
+      status: "Active",
+    },
+  ];
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -50,13 +74,10 @@ const DashboardPage = () => {
             Admin Dashboard
           </h1>
           <p className="text-slate-500 mt-1 text-sm md:text-base">
-            Welcome back! Here's what's happening with your marketplace.
+           Monitor and analyse your MesseMatch application
           </p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 shadow-sm text-xs font-medium text-slate-600 w-fit transition-all hover:shadow-md">
-          <Sparkles size={14} className="text-amber-500" />
-          System Updated: 2026 Active
-        </div>
+     
       </header>
 
       {/* Top Stat Cards */}
@@ -67,22 +88,22 @@ const DashboardPage = () => {
           <StatCard
             title="Total Users"
             value={1230}
-            Icon={BookOpen}
-          />
-          <StatCard
-            title="Active Listing"
-            value={600}
             Icon={Users}
           />
           <StatCard
-            title="Total Orders"
-            value={250}
-            Icon={FileText}
+            title="Active Users"
+            value={600}
+            Icon={UserCheck}
           />
           <StatCard
-            title="Revenue"
-            value={"$2230"}
-            Icon={Layout}
+            title="Inactive Users"
+            value={250}
+            Icon={UserRoundX}
+          />
+          <StatCard
+            title="Total Studios "
+            value={"2230"}
+            Icon={Monitor}
           />
         </>
       </div>
@@ -90,13 +111,13 @@ const DashboardPage = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <IndependentChartCard
-          title="Total User"
+          title="Monthly User Growth"
           type="book"
           dataKey="bookGrowth"
           chartType="area"
         />
         <IndependentChartCard
-          title="Revenue Overview"
+          title="Studio Overview"
           type="blog"
           dataKey="blogGrowth"
           chartType="bar"
@@ -104,7 +125,11 @@ const DashboardPage = () => {
       </div>
 
 
-      <RecentOrdersTable />
+       {/* Recent Users Table */}
+      <div>
+        <p className="text-lg font-semibold text-slate-800 mb-4">Recent Users</p>
+        <RecentUsersTable users={users} />
+      </div>
 
     </div>
   );
@@ -200,7 +225,7 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
                 </option>
               ))}
             </select>
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover/select:text-slate-900 transition-colors">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#5B2EFF] group-hover/select:text-[#5B2EFF] transition-colors">
               <ChevronDown size={14} strokeWidth={3} />
             </div>
           </div>
@@ -253,9 +278,9 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#0f172a"
+                stroke="#5B2EFF"
                 strokeWidth={3}
-                fill={`url(#color${type})`}
+                fill={`#5B2EFF`}
               />
             </AreaChart>
           ) : (
@@ -287,7 +312,7 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
               />
               <Bar
                 dataKey="count"
-                fill="#0f172a"
+                fill="#5B2EFF"
                 radius={[4, 4, 0, 0]}
                 barSize={12}
               />
@@ -303,7 +328,10 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
 };
 
 const StatCard = ({ title, value, Icon }) => (
-  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-start transition-all hover:shadow-md hover:-translate-y-1 group">
+  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex gap-5 items-start transition-all hover:shadow-md hover:-translate-y-1 group">
+     <div className="p-3 bg-slate-50 rounded-xl border border-slate-100  group-hover:text-white transition-all duration-300">
+      <Icon size={22} className="text-[#5B2EFF]" />
+    </div>
     <div>
       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1 leading-tight">
         {title}
@@ -312,9 +340,7 @@ const StatCard = ({ title, value, Icon }) => (
         {value}
       </h3>
     </div>
-    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
-      <Icon size={22} className="transition-colors" />
-    </div>
+   
   </div>
 );
 
