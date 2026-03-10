@@ -51,7 +51,7 @@ const ProjectCard = ({ artist, studio, date, time, price, status }) => {
       {/* Pending Buttons */}
       {status === "Pending" && (
         <div className="flex gap-3 mt-4">
-          <button className="flex-1 bg-gradient-to-r from-[#6C4CFF] to-[#5B2EFF] py-2 rounded-lg">
+          <button className="flex-1 bg-linear-to-r from-[#6C4CFF] to-[#5B2EFF] py-2 rounded-lg">
             Approve
           </button>
 

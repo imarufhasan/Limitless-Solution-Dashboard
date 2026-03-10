@@ -15,8 +15,8 @@ import EditProfile from "./pages/EditProfile";
 import PrivacySettings from "./pages/PrivacySettings";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import UserManagement from "./pages/UserManagement";
-import ProductManagement from "./pages/ProductManagement/ProductManagement";
 import Order from "./pages/Order/Order";
+import StudioDetails from "./pages/StudioDetails/StudioDetails";
 function App() {
   return (
     <Router>
@@ -53,7 +53,7 @@ function App() {
           path="/studio-details"
           element={
             <Layout>
-              <ProductManagement/>
+              <StudioDetails/>
             </Layout>
           }
         />
