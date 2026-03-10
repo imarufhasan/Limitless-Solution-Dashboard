@@ -4,63 +4,83 @@ import OrderCard from "../../components/OrderCard/OrderCard";
 import user from "../../assets/images/user.png"
 import user2 from "../../assets/images/user1.png"
 import product from "../../assets/images/product2.png"
+import ProjectCard from "../../components/ProjectCard/ProjectCard";
 
 const Order = () => {
-    const [searchTerm, setSearchTerm] = useState("");
 
     const orders = [
         {
-            "orderId": "#I5FHM",
-            "status": "Completed",
-            "product": {
-                "name": "Woman Bag",
-                "image": product,
-                "price": 120.00
-            },
-            "buyer": {
-                "name": "John Smith",
-                "avatar": user
-            },
-            "seller": {
-                "name": "Emma Wilson",
-                "avatar": user2
-            },
-            "dates": {
-                "orderDate": "2024-01-10",
-                "completedDate": "2024-01-12"
-            },
-            "locker": {
-                "location": "Locker A-12"
-            },
-            "currency": "USD"
+            id: 1,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Completed",
         },
         {
-            "orderId": "#I5FHM",
-            "status": "Completed",
-            "product": {
-                "name": "Woman Bag",
-                "image": product,
-                "price": 120.00
-            },
-            "buyer": {
-                "name": "John Smith",
-                "avatar": user
-            },
-            "seller": {
-                "name": "Emma Wilson",
-                "avatar": user2
-            },
-            "dates": {
-                "orderDate": "2024-01-10",
-                "completedDate": "2024-01-12"
-            },
-            "locker": {
-                "location": "Locker A-12"
-            },
-            "currency": "USD"
-        }
-    ]
+            id: 2,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Active",
+        },
+        {
+            id: 3,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Pending",
+        },
+        {
+            id: 4,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Pending",
+        },
+        {
+            id: 5,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Pending",
+        },
+        {
+            id: 6,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Pending",
+        },
+        {
+            id: 7,
+            artist: "Mike Johnson",
+            studio: "Loud House Premium Studio",
+            date: "March 10, 2026",
+            time: "3:00 PM - 6:00 PM",
+            price: 300,
+            status: "Pending",
+        },
+    ];
 
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [projectStatus, setProjectStatus] = useState("Pending");
+
+
+
+    console.log(projectStatus)
 
     return (
         <div className="min-h-screen bg-white p-6 md:p-5 font-sans text-slate-800">
@@ -68,10 +88,10 @@ const Order = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                        Order Management
+                        All Project
                     </h1>
                     <p className="text-gray-500 mt-1">
-                        Monitor all transactions and pickups
+                        Manage All Project
                     </p>
                 </div>
 
@@ -95,31 +115,40 @@ const Order = () => {
                     />
                 </div>
                 <div className="flex gap-5">
-                    <button className="bg-[#1A435C] text-white whitespace-nowrap px-4 py-2 rounded-lg">
-                        All
+                    <button onClick={() => setProjectStatus("Pending")} className={` cursor-pointerwhitespace-nowrap px-4 py-2 rounded-lg ${projectStatus === "Pending" ? "bg-[#5B2EFF] text-white" : "bg-[#E8ECEF] text-slate-700"}`}>
+                        Pending
                     </button>
-                    <button className="bg-[#E8ECEF] text-slate-700 whitespace-nowrap px-4 py-2 rounded-lg">
-                        Processing
+                    <button onClick={() => setProjectStatus("Active")} className={` cursor-pointer whitespace-nowrap px-4 py-2 rounded-lg ${projectStatus === "Active" ? "bg-[#5B2EFF] text-white" : "bg-[#E8ECEF] text-slate-700"}`}>
+                        Active
                     </button>
-                    <button className="bg-[#E8ECEF] text-slate-700 whitespace-nowrap px-4 py-2 rounded-lg">
-                        Ready
+                    <button onClick={() => setProjectStatus("Completed")} className={` cursor-pointer whitespace-nowrap px-4 py-2 rounded-lg ${projectStatus === "Complete" ? "bg-[#5B2EFF] text-white" : "bg-[#E8ECEF] text-slate-700"}`}>
+                        Complete
                     </button>
-                    <button className="bg-[#E8ECEF] text-slate-700 whitespace-nowrap px-4 py-2 rounded-lg">
-                        Completed
-                    </button>
+
                 </div>
 
             </div>
 
 
-            {/* order details section */}
+            {/* Project details section */}
 
-            {
-                orders?.map(order =>{
-                    return <OrderCard key={order?.orderId} order={order} />
-                })
-            }
+            <div className="flex flex-wrap gap-10 justify-between">
 
+                {orders
+                    .filter((order) => order.status === projectStatus)
+                    .map((order) => (
+                        <ProjectCard
+                            key={order.id}
+                            artist={order.artist}
+                            studio={order.studio}
+                            date={order.date}
+                            time={order.time}
+                            price={order.price}
+                            status={order.status}
+                        />
+                    ))}
+
+            </div>
 
 
 

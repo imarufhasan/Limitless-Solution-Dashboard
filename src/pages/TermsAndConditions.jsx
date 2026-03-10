@@ -86,7 +86,7 @@ export default function TermsConditionsManagement() {
         >
           Save Terms & Conditions
         </button>
-      </div>
+      </div> 
     </div>
   );
 }
