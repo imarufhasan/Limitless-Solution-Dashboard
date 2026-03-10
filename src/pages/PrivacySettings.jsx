@@ -78,7 +78,7 @@ export default function PrivacyPolicyManagement() {
           // disabled={isSaving}
           className={`w-full mt-6 py-4 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-[0.99] ${
            
-              "bg-[#1e293b] text-white hover:bg-slate-800"
+              "bg-[#5B2EFF] text-white hover:bg-[#5B2EFF]"
           }`}
         >
            Save Privacy Policy

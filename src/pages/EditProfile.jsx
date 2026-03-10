@@ -83,7 +83,7 @@ export default function ProfileManagement() {
       <ToastContainer theme="colored" />
 
       {/* Profile Header */}
-      <div className="w-full max-w-200 bg-[#333333] rounded-[2.5rem] p-8 mb-10 relative flex flex-col items-center shadow-xl">
+      <div className="w-full max-w-200 bg-[#5B2EFF] rounded-[2.5rem] p-8 mb-10 relative flex flex-col items-center shadow-xl">
         <div className="relative">
           <div
             className={`w-24 h-24 rounded-full border-4 border-white overflow-hidden bg-slate-200 ${
@@ -100,7 +100,7 @@ export default function ProfileManagement() {
           <FileUploader onFileSelect={handleAvatarSelect} accept="image/*">
             <div className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow-md cursor-pointer">
               {isUploadingImage ? (
-                <div className="w-4 h-4 border-2 border-slate-800 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#5B2EFF] border-t-transparent rounded-full animate-spin" />
               ) : (
                 <Camera size={16} />
               )}
@@ -126,7 +126,7 @@ export default function ProfileManagement() {
             onClick={() => setActiveTab(tab)}
             className={`pb-2 font-bold capitalize ${
               activeTab === tab
-                ? "text-slate-800 border-b-2 border-slate-800"
+                ? "text-[#5B2EFF] border-b-2 border-[#5B2EFF]"
                 : "text-gray-400"
             }`}
           >
@@ -156,7 +156,7 @@ export default function ProfileManagement() {
             <button
               type="submit"
               disabled={isUpdatingProfile}
-              className="w-full py-4 bg-[#2D3139] text-white rounded-2xl font-bold"
+              className="w-full py-4 bg-[#5B2EFF] text-white rounded-2xl font-bold"
             >
               {isUpdatingProfile ? "Updating..." : "Update Profile"}
             </button>
@@ -187,7 +187,7 @@ export default function ProfileManagement() {
             <button
               type="submit"
               disabled={isChangingPassword}
-              className="w-full py-4 bg-[#2D3139] text-white rounded-2xl font-bold"
+              className="w-full py-4 bg-[#5B2EFF] text-white rounded-2xl font-bold"
             >
               {isChangingPassword ? "Saving..." : "Save & Change"}
             </button>
