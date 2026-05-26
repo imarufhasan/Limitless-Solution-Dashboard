@@ -1,19 +1,15 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaSignOutAlt, FaChevronRight } from "react-icons/fa";
+import { FaSignOutAlt, FaChevronRight } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { HiOutlineBookOpen } from "react-icons/hi";
 import { LiaUserFriendsSolid } from "react-icons/lia";
-import { IoDocumentTextOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
 import { MdOutlinePrivacyTip } from "react-icons/md";
 import { FaRegNewspaper } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
-import { BiCategory } from "react-icons/bi";
 import { FiShoppingBag } from "react-icons/fi";
-import { AiOutlineDollarCircle } from "react-icons/ai";
 import logo from "../assets/images/logo.png"
-import { Monitor, MonitorCloud } from "lucide-react";
+import {  MonitorCloud } from "lucide-react";
 
 const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
   const navigate = useNavigate();

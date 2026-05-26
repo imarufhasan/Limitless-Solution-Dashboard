@@ -19,43 +19,44 @@ const SetNewPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [changePassword, { isLoading }] = useChangePasswordMutation();
+  // const [changePassword, { isLoading }] = useChangePasswordMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    navigate("/login");
 
-    if (!newPassword || !confirmPassword) {
-      toast.error("Please fill in all fields.");
-      return;
-    }
+    // if (!newPassword || !confirmPassword) {
+    //   toast.error("Please fill in all fields.");
+    //   return;
+    // }
 
-    if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match. Please try again.");
-      return;
-    }
+    // if (newPassword !== confirmPassword) {
+    //   toast.error("Passwords do not match. Please try again.");
+    //   return;
+    // }
 
-    if (newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters long.");
-      return;
-    }
+    // if (newPassword.length < 6) {
+    //   toast.error("Password must be at least 6 characters long.");
+    //   return;
+    // }
 
-    try {
-      // Send the data required by your backend
-      await changePassword({
-        email: email,
-        password: newPassword,
-      }).unwrap();
+    // try {
+    //   // Send the data required by your backend
+    //   await changePassword({
+    //     email: email,
+    //     password: newPassword,
+    //   }).unwrap();
 
-      toast.success("Password updated successfully!");
+    //   toast.success("Password updated successfully!");
 
-      // Navigate to login after successful reset
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-    } catch (err) {
+    //   // Navigate to login after successful reset
+    //   setTimeout(() => {
+    //     navigate("/login");
+    //   }, 2000);
+    // } catch (err) {
 
-      toast.error(err?.data?.message || "Failed to update password.");
-    }
+    //   toast.error(err?.data?.message || "Failed to update password.");
+    // }
   };
 
   return (
@@ -90,7 +91,7 @@ const SetNewPasswordPage = () => {
           <Button
             buttonText="Update Password"
             handleSubmit={handleSubmit}
-            loading={isLoading} // Show spinner during API call
+            // loading={isLoading} // Show spinner during API call
           />
         </form>
       </div>

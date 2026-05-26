@@ -6,7 +6,7 @@ const Button = ({ buttonText, handleSubmit, loading, disabled }) => {
     <div className="flex items-center justify-center">
       <button
         type="submit"
-        className="w-[30%] py-3 bg-[#1A435C] text-white rounded-lg hover:bg-gray-500 focus:outline-none flex items-center justify-center disabled:bg-gray-400"
+        className="w-[30%] py-3 bg-[#652D8B] text-white rounded-lg hover:bg-gray-500 focus:outline-none flex items-center justify-center disabled:bg-gray-400"
         onClick={handleSubmit}
         disabled={loading || disabled} // Disable button while loading
       >

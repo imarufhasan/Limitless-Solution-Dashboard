@@ -10,10 +10,10 @@ const VerifyCodePage = () => {
   // Get email from navigation state (passed from ForgotPasswordPage)
   const email = location.state?.email || "";
 
-  const [code, setCode] = useState(["", "", "", "", "",""]);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
 
-  
+
 
   const handleInputChange = (value, index) => {
     if (isNaN(value)) return;
@@ -46,6 +46,12 @@ const VerifyCodePage = () => {
     inputRefs.current[nextIndex].focus();
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // const enteredCode = code.join("");
+    navigate("/setNewPassword");
+  }
+
 
 
   return (
@@ -59,7 +65,7 @@ const VerifyCodePage = () => {
         </p>
 
         <form
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit}
           className="flex justify-center mb-6 space-x-2"
         >
           {code.map((digit, index) => (
@@ -79,15 +85,16 @@ const VerifyCodePage = () => {
         </form>
 
         <Button
+          handleSubmit={handleSubmit}
           buttonText="Verify Code"
         />
 
         <p className="text-center mt-6 text-gray-600">
           You have not received the email?{" "}
           <button
-            className={`text-sm font-medium ${
-              isResending ? "text-gray-400" : "text-green-500 hover:underline"
-            } bg-transparent border-none cursor-pointer`}
+          // className={`text-sm font-medium ${
+          //   isResending ? "text-gray-400" : "text-green-500 hover:underline"
+          // } bg-transparent border-none cursor-pointer`}
           >
             Resend
           </button>
