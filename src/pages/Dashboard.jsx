@@ -5,6 +5,8 @@ import {
   UserCheck,
   Monitor,
   UserRoundX,
+  User2,
+  TrendingUp,
 } from "lucide-react";
 import {
   AreaChart,
@@ -18,6 +20,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import RecentUsersTable from "../components/RecentUserTable/RecentUserTable";
+import BannerUploader from "../components/Banneruploader";
 
 const DashboardPage = () => {
 
@@ -91,19 +94,19 @@ const users = [
             Icon={Users}
           />
           <StatCard
-            title="Active Users"
+            title="Total Customers"
             value={600}
             Icon={UserCheck}
           />
           <StatCard
-            title="Inactive Users"
+            title="Total Employees"
             value={250}
-            Icon={UserRoundX}
+            Icon={User2}
           />
           <StatCard
-            title="Total Studios "
+            title="Total Metlas"
             value={"2230"}
-            Icon={Monitor}
+            Icon={TrendingUp}
           />
         </>
       </div>
@@ -111,13 +114,13 @@ const users = [
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <IndependentChartCard
-          title="Monthly User Growth"
+          title="Monthly Customer Growth"
           type="book"
           dataKey="bookGrowth"
           chartType="area"
         />
         <IndependentChartCard
-          title="Studio Overview"
+          title="Monthly Purchase Overview"
           type="blog"
           dataKey="blogGrowth"
           chartType="bar"
@@ -127,8 +130,7 @@ const users = [
 
        {/* Recent Users Table */}
       <div>
-        <p className="text-lg font-semibold text-slate-800 mb-4">Recent Users</p>
-        <RecentUsersTable users={users} />
+       <BannerUploader/>
       </div>
 
     </div>
@@ -225,7 +227,7 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
                 </option>
               ))}
             </select>
-            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#5B2EFF] group-hover/select:text-[#5B2EFF] transition-colors">
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#652D8B] group-hover/select:text-[#652D8B] transition-colors">
               <ChevronDown size={14} strokeWidth={3} />
             </div>
           </div>
@@ -260,13 +262,13 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#94a3b8" }}
+                tick={{ fontSize: 12, fill: "#652D8B" }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#94a3b8" }}
+                tick={{ fontSize: 12, fill: "#652D8B" }}
               />
               <Tooltip
                 contentStyle={{
@@ -278,9 +280,9 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#5B2EFF"
+                stroke="#652D8B"
                 strokeWidth={3}
-                fill={`#5B2EFF`}
+                fill={`#652D8B`}
               />
             </AreaChart>
           ) : (
@@ -294,13 +296,13 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#94a3b8" }}
+                tick={{ fontSize: 12, fill: "#652D8B" }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: "#94a3b8" }}
+                tick={{ fontSize: 12, fill: "#652D8B" }}
               />
               <Tooltip
                 cursor={{ fill: "#f8fafc" }}
@@ -312,7 +314,7 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
               />
               <Bar
                 dataKey="count"
-                fill="#5B2EFF"
+                fill="#652D8B"
                 radius={[4, 4, 0, 0]}
                 barSize={12}
               />
@@ -329,8 +331,8 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
 
 const StatCard = ({ title, value, Icon }) => (
   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex gap-5 items-start transition-all hover:shadow-md hover:-translate-y-1 group">
-     <div className="p-3 bg-slate-50 rounded-xl border border-slate-100  group-hover:text-white transition-all duration-300">
-      <Icon size={22} className="text-[#5B2EFF]" />
+     <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100  group-hover:text-white transition-all duration-300">
+      <Icon size={22} className="text-[#652D8B]" />
     </div>
     <div>
       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1 leading-tight">
