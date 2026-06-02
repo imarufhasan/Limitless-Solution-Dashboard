@@ -72,7 +72,7 @@ export default function AboutUsManagement() {
           <button
             className={`w-full py-4 rounded-2xl font-bold text-lg shadow-xl transition-all active:scale-[0.98] tracking-wide ${
             
-                 "bg-[#5B2EFF] text-white hover:bg-[#5B2EFF] shadow-slate-200"
+                 "bg-[#652D8B] text-white hover:bg-[#652D8B] shadow-slate-200"
             }`}
           >
             Save Changes

@@ -16,7 +16,8 @@ import PrivacySettings from "./pages/PrivacySettings";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import UserManagement from "./pages/UserManagement";
 import Order from "./pages/Order/Order";
-import StudioDetails from "./pages/StudioDetails/StudioDetails";
+import MetalPrice from "./pages/MetalPrice/MetalPrice";
+import EmployeeManagement from "./pages/EmployeeManagement";
 function App() {
   return (
     <Router>
@@ -50,19 +51,27 @@ function App() {
           }
         />
         <Route
-          path="/studio-details"
+          path="/add-metal-price"
           element={
             <Layout>
-              <StudioDetails/>
+              <MetalPrice/>
             </Layout>
           }
         />
       
         <Route
-          path="/pending-projects"
+          path="/requested-orders"
           element={
             <Layout>
               <Order/>
+            </Layout>
+          }
+        />
+        <Route
+          path="/employee-management"
+          element={
+            <Layout>
+              <EmployeeManagement />
             </Layout>
           }
         />

@@ -81,7 +81,7 @@ export default function TermsConditionsManagement() {
         <button
           
           className={`w-full mt-6 py-4 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-[0.99] ${
-             "bg-[#5B2EFF] text-white hover:bg-[#5B2EFF]"
+             "bg-[#652D8B] text-white hover:bg-[#652D8B]"
           }`}
         >
           Save Terms & Conditions

@@ -69,14 +69,19 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
             label="User Management"
           />
           <SidebarItem
-            to="/studio-details"
+            to="/add-metal-price"
             icon={MonitorCloud}
-            label="Studio Details"
+            label="Add Metal Price"
           />
           <SidebarItem
-            to="/pending-projects"
+            to="/requested-orders"
             icon={FiShoppingBag}
-            label="Pending Projects"
+            label="Requestes"
+          />
+          <SidebarItem
+            to="/employee-management"
+            icon={LiaUserFriendsSolid}
+            label="Employee "
           />
 
           <li className="relative group/parent">

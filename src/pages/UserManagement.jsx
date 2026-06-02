@@ -98,7 +98,7 @@ const users = [
           />
         </div>
         <div className="flex gap-5">
-          <button className="bg-[#5B2EFF] text-white whitespace-nowrap px-4 py-2 rounded-lg">
+          <button className="bg-[#652D8B] text-white whitespace-nowrap px-4 py-2 rounded-lg">
             All Users
           </button>
           <button className="bg-[#E8ECEF] text-slate-700 whitespace-nowrap px-4 py-2 rounded-lg">

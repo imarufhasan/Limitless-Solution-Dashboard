@@ -26,7 +26,7 @@ const ProjectCard = ({ artist, studio, date, time, price, status }) => {
 
       <div className="flex items-center justify-between">
 
-        <p className="text-[#5B2EFF] font-semibold text-lg">${price}</p>
+        <p className="text-[#652D8B] font-semibold text-lg">${price}</p>
 
         {/* STATUS */}
         {status === "Completed" && (
@@ -51,7 +51,7 @@ const ProjectCard = ({ artist, studio, date, time, price, status }) => {
       {/* Pending Buttons */}
       {status === "Pending" && (
         <div className="flex gap-3 mt-4">
-          <button className="flex-1 bg-linear-to-r from-[#6C4CFF] to-[#5B2EFF] py-2 rounded-lg">
+          <button className="flex-1 bg-linear-to-r from-[#6C4CFF] to-[#652D8B] py-2 rounded-lg">
             Approve
           </button>
 
