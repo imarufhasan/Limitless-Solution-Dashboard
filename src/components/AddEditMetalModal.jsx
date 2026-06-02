@@ -44,7 +44,7 @@ const AddEditMetalModal = ({ open, onClose, isEdit }) => {
                 >
                     <Input
                         placeholder="Enter metal name"
-                        className="h-[42px] rounded-xl"
+                        className="h-10.5 rounded-xl"
                     />
                 </Form.Item>
 
@@ -85,7 +85,7 @@ const AddEditMetalModal = ({ open, onClose, isEdit }) => {
                 <div className="grid grid-cols-2 gap-4 mt-2">
                     <Button
                         htmlType="submit"
-                        className="!h-[42px] !rounded-xl !bg-[#6C2BD9] hover:!bg-[#5b21b6] !text-white !border-none !font-medium"
+                        className="h-10.5! rounded-xl! bg-[#6C2BD9]! hover:bg-[#5b21b6]! text-white! border-none! font-medium!"
                     >
                         <div className="flex items-center gap-2">
                             <Save size={16} />
@@ -95,7 +95,7 @@ const AddEditMetalModal = ({ open, onClose, isEdit }) => {
 
                     <Button
                         onClick={onClose}
-                        className="!h-[42px] !rounded-xl !bg-[#F3EDF9] hover:!bg-[#E9DDF8] !text-[#111827] !border-none !font-medium"
+                        className="h-10.5! rounded-xl! bg-[#F3EDF9]! hover:bg-[#E9DDF8]! text-[#111827]! border-none! font-medium!"
                     >
                         Cancel
                     </Button>

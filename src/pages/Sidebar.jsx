@@ -9,7 +9,7 @@ import { FaRegNewspaper } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { FiShoppingBag } from "react-icons/fi";
 import logo from "../assets/images/logo.png";
-import { MonitorCloud } from "lucide-react";
+import { BookCheck, MonitorCloud } from "lucide-react";
 
 const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
   const navigate = useNavigate();
@@ -82,6 +82,11 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
             to="/employee-management"
             icon={LiaUserFriendsSolid}
             label="Employee "
+          />
+          <SidebarItem
+            to="/order"
+            icon={BookCheck}
+            label="Orders"
           />
 
           <li className="relative group/parent">

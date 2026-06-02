@@ -15,9 +15,10 @@ import EditProfile from "./pages/EditProfile";
 import PrivacySettings from "./pages/PrivacySettings";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import UserManagement from "./pages/UserManagement";
-import Order from "./pages/Order/Order";
 import MetalPrice from "./pages/MetalPrice/MetalPrice";
 import EmployeeManagement from "./pages/EmployeeManagement";
+import RequestOrder from "./pages/RequestOrder/RequestOrder";
+import Order from "./pages/Order";
 function App() {
   return (
     <Router>
@@ -63,7 +64,7 @@ function App() {
           path="/requested-orders"
           element={
             <Layout>
-              <Order/>
+              <RequestOrder/>
             </Layout>
           }
         />
@@ -72,6 +73,14 @@ function App() {
           element={
             <Layout>
               <EmployeeManagement />
+            </Layout>
+          }
+        />
+        <Route
+          path="/order"
+          element={
+            <Layout>
+              <Order />
             </Layout>
           }
         />

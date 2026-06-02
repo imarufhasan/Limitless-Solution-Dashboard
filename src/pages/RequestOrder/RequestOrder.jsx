@@ -97,7 +97,7 @@ const orders = [
   },
 ];
 
-export default function Order() {
+export default function RequestOrder() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
@@ -128,7 +128,7 @@ export default function Order() {
             placeholder="Search by customer name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-[44px] bg-[#F9FAFB] rounded-xl border border-transparent focus:border-[#D1D5DB] outline-none pl-11 pr-4 text-sm"
+            className="w-full h-11 bg-[#F9FAFB] rounded-xl border border-transparent focus:border-[#D1D5DB] outline-none pl-11 pr-4 text-sm"
           />
         </div>
 
@@ -138,7 +138,7 @@ export default function Order() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`h-[40px] px-5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all ${
+              className={`h-10 px-5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === tab.id
                   ? "bg-[#6C2BD9] text-white"
                   : "bg-[#F9FAFB] text-[#111827]"
@@ -213,14 +213,14 @@ export default function Order() {
               <div className="flex items-center gap-3">
                 {order.secondButton && (
                   <button
-                    className={`h-[42px] px-5 rounded-xl text-sm font-medium ${order.secondButtonColor}`}
+                    className={`h-10.5 px-5 rounded-xl text-sm font-medium ${order.secondButtonColor}`}
                   >
                     {order.secondButton}
                   </button>
                 )}
 
                 <button
-                  className={`h-[42px] px-5 rounded-xl text-sm font-medium ${order.buttonColor}`}
+                  className={`h-10.5 px-5 rounded-xl text-sm font-medium ${order.buttonColor}`}
                 >
                   {order.button}
                 </button>

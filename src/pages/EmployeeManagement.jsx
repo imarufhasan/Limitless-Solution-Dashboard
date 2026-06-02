@@ -155,7 +155,7 @@ export default function EmployeeManagement() {
           </p>
         </div>
 
-        <button className="h-[44px] px-5 rounded-xl bg-[#6C2BD9] text-white text-sm font-medium flex items-center gap-2">
+        <button className="h-11 px-5 rounded-xl bg-[#6C2BD9] text-white text-sm font-medium flex items-center gap-2">
           <Plus size={16} />
           Add New Employee
         </button>
@@ -208,7 +208,7 @@ export default function EmployeeManagement() {
             placeholder="Search by name, ID, or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-[46px] rounded-xl bg-[#F9FAFB] border border-transparent focus:border-[#D1D5DB] outline-none pl-11 pr-4 text-sm"
+            className="w-full h-11.5 rounded-xl bg-[#F9FAFB] border border-transparent focus:border-[#D1D5DB] outline-none pl-11 pr-4 text-sm"
           />
         </div>
 
@@ -216,7 +216,7 @@ export default function EmployeeManagement() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setActiveTab("all")}
-            className={`h-[38px] px-4 rounded-xl text-sm font-medium ${
+            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${
               activeTab === "all"
                 ? "bg-[#6C2BD9] text-white"
                 : "bg-[#F3F4F6] text-[#111827]"
@@ -227,7 +227,7 @@ export default function EmployeeManagement() {
 
           <button
             onClick={() => setActiveTab("available")}
-            className={`h-[38px] px-4 rounded-xl text-sm font-medium ${
+            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${
               activeTab === "available"
                 ? "bg-[#6C2BD9] text-white"
                 : "bg-[#F3F4F6] text-[#111827]"
@@ -238,7 +238,7 @@ export default function EmployeeManagement() {
 
           <button
             onClick={() => setActiveTab("busy")}
-            className={`h-[38px] px-4 rounded-xl text-sm font-medium ${
+            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${
               activeTab === "busy"
                 ? "bg-[#6C2BD9] text-white"
                 : "bg-[#F3F4F6] text-[#111827]"
