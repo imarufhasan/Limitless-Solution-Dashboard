@@ -90,7 +90,7 @@ const MetalPrice = () => {
           </p>
         </div>
 
-        <button onClick={() => setOpen(true)} className="bg-[#6C2BD9] hover:bg-[#5b21b6] text-white px-5 py-3 rounded-xl text-sm font-medium transition-all">
+        <button onClick={() => setOpen(true)} className="bg-[#652D8B] hover:bg-[#5b21b6] text-white px-5 py-3 rounded-xl text-sm font-medium transition-all">
           + Add New Metal
         </button>
       </div>
@@ -166,7 +166,7 @@ const MetalPrice = () => {
               <div>
                 <p className="text-xs text-gray-500 mb-1">Per Kg</p>
 
-                <h3 className="text-[22px] font-bold text-[#6C2BD9]">
+                <h3 className="text-[22px] font-bold text-[#652D8B]">
                   {item.perKg}
                   <span className="text-sm font-medium text-gray-600">
                     {" "}
@@ -178,7 +178,7 @@ const MetalPrice = () => {
               <div>
                 <p className="text-xs text-gray-500 mb-1">Per Piece</p>
 
-                <h3 className="text-[22px] font-bold text-[#6C2BD9]">
+                <h3 className="text-[22px] font-bold text-[#652D8B]">
                   {item.perPiece}
                   <span className="text-sm font-medium text-gray-600">
                     {" "}

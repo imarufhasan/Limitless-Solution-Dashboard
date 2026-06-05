@@ -1,9 +1,10 @@
 import { Plus, Search } from "lucide-react";
 import React, { useState } from "react";
 import { Table } from "antd";
+import AddEmployeeModal from "../components/AddEmployeeModal";
 
 
-const employeeData= [
+const employeeData = [
   {
     key: 1,
     avatar: "https://i.pravatar.cc/100?img=1",
@@ -64,8 +65,9 @@ const employeeData= [
 export default function EmployeeManagement() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [open, setOpen] = useState(false);
 
-  const columns= [
+  const columns = [
     {
       title: "#",
       dataIndex: "avatar",
@@ -123,11 +125,10 @@ export default function EmployeeManagement() {
       key: "status",
       render: (status) => (
         <span
-          className={`px-3 py-1 rounded-full text-xs font-medium ${
-            status === "Available"
+          className={`px-3 py-1 rounded-full text-xs font-medium ${status === "Available"
               ? "bg-[#DCFCE7] text-[#16A34A]"
               : "bg-[#FEF3C7] text-[#D97706]"
-          }`}
+            }`}
         >
           {status}
         </span>
@@ -155,7 +156,7 @@ export default function EmployeeManagement() {
           </p>
         </div>
 
-        <button className="h-11 px-5 rounded-xl bg-[#6C2BD9] text-white text-sm font-medium flex items-center gap-2">
+        <button  onClick={() => setOpen(true)} className="h-11 px-5 rounded-xl bg-[#652D8B] text-white text-sm font-medium flex items-center gap-2">
           <Plus size={16} />
           Add New Employee
         </button>
@@ -216,33 +217,30 @@ export default function EmployeeManagement() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setActiveTab("all")}
-            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${
-              activeTab === "all"
-                ? "bg-[#6C2BD9] text-white"
+            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${activeTab === "all"
+                ? "bg-[#652D8B] text-white"
                 : "bg-[#F3F4F6] text-[#111827]"
-            }`}
+              }`}
           >
             All Employees
           </button>
 
           <button
             onClick={() => setActiveTab("available")}
-            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${
-              activeTab === "available"
-                ? "bg-[#6C2BD9] text-white"
+            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${activeTab === "available"
+                ? "bg-[#652D8B] text-white"
                 : "bg-[#F3F4F6] text-[#111827]"
-            }`}
+              }`}
           >
             Available
           </button>
 
           <button
             onClick={() => setActiveTab("busy")}
-            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${
-              activeTab === "busy"
-                ? "bg-[#6C2BD9] text-white"
+            className={`h-9.5 px-4 rounded-xl text-sm font-medium ${activeTab === "busy"
+                ? "bg-[#652D8B] text-white"
                 : "bg-[#F3F4F6] text-[#111827]"
-            }`}
+              }`}
           >
             Busy
           </button>
@@ -259,6 +257,8 @@ export default function EmployeeManagement() {
           className="custom-employee-table"
         />
       </div>
+
+      <AddEmployeeModal open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

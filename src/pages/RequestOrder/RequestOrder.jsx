@@ -49,7 +49,7 @@ const orders = [
     date: "May 15, 2026",
     amount: "$32,000",
     button: "Review & Send Offer",
-    buttonColor: "bg-[#6C2BD9] text-white",
+    buttonColor: "bg-[#652D8B] text-white",
   },
   {
     id: "#000003",
@@ -140,7 +140,7 @@ export default function RequestOrder() {
               onClick={() => setActiveTab(tab.id)}
               className={`h-10 px-5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === tab.id
-                  ? "bg-[#6C2BD9] text-white"
+                  ? "bg-[#652D8B] text-white"
                   : "bg-[#F9FAFB] text-[#111827]"
               }`}
             >
@@ -197,7 +197,7 @@ export default function RequestOrder() {
                   {order.date}
                 </p>
 
-                <h3 className="text-[28px] font-bold text-[#6C2BD9] mt-2">
+                <h3 className="text-[28px] font-bold text-[#652D8B] mt-2">
                   {order.amount}
                 </h3>
               </div>

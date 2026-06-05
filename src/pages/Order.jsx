@@ -125,7 +125,7 @@ export default function Order() {
               onClick={() => setActiveTab(tab)}
               className={`h-9.5 px-4 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab
-                  ? "bg-[#6C2BD9] text-white"
+                  ? "bg-[#652D8B] text-white"
                   : "bg-[#F3F4F6] text-[#111827]"
               }`}
             >
@@ -231,7 +231,7 @@ export default function Order() {
                   Offer Amount
                 </p>
 
-                <h2 className="text-[34px] font-bold text-[#6C2BD9] mt-1">
+                <h2 className="text-[34px] font-bold text-[#652D8B] mt-1">
                   {order.amount}
                 </h2>
               </div>

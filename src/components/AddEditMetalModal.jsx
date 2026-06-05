@@ -85,7 +85,7 @@ const AddEditMetalModal = ({ open, onClose, isEdit }) => {
                 <div className="grid grid-cols-2 gap-4 mt-2">
                     <Button
                         htmlType="submit"
-                        className="h-10.5! rounded-xl! bg-[#6C2BD9]! hover:bg-[#5b21b6]! text-white! border-none! font-medium!"
+                        className="h-10.5! rounded-xl! bg-[#652D8B]! hover:bg-[#5b21b6]! text-white! border-none! font-medium!"
                     >
                         <div className="flex items-center gap-2">
                             <Save size={16} />

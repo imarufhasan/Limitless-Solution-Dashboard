@@ -19,6 +19,7 @@ import MetalPrice from "./pages/MetalPrice/MetalPrice";
 import EmployeeManagement from "./pages/EmployeeManagement";
 import RequestOrder from "./pages/RequestOrder/RequestOrder";
 import Order from "./pages/Order";
+import Messages from "./pages/Messages";
 function App() {
   return (
     <Router>
@@ -81,6 +82,14 @@ function App() {
           element={
             <Layout>
               <Order />
+            </Layout>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <Layout>
+              <Messages />
             </Layout>
           }
         />

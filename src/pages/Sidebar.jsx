@@ -9,7 +9,7 @@ import { FaRegNewspaper } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { FiShoppingBag } from "react-icons/fi";
 import logo from "../assets/images/logo.png";
-import { BookCheck, MonitorCloud } from "lucide-react";
+import { BookCheck, MessageSquare, MonitorCloud } from "lucide-react";
 
 const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
   const navigate = useNavigate();
@@ -87,6 +87,11 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
             to="/order"
             icon={BookCheck}
             label="Orders"
+          />
+          <SidebarItem
+            to="/messages"
+            icon={MessageSquare}
+            label="Messages"
           />
 
           <li className="relative group/parent">
