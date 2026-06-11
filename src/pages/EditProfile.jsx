@@ -24,35 +24,29 @@ export default function ProfileManagement() {
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [avatarFile, setAvatarFile] = useState(null); // actual File for upload
+  const [avatarFile, setAvatarFile] = useState(null);
   const [initialized, setInitialized] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // add mutation hook
   const [changePassword, { isLoading: isChangingPassword }] =
     useChangePasswordMutation();
 
-  // update passwords state — match API body
   const [passwords, setPasswords] = useState({
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-  // const [passwords, setPasswords] = useState({
-  //   current: "",
-  //   new: "",
-  //   confirm: "",
-  // });
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  // const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const handleAvatarSelect = (file) => {
     if (file.size > 2 * 1024 * 1024) {
       return toast.error("File is too large. Max 2MB allowed.");
     }
     setIsUploadingImage(true);
+    setImageLoaded(false);
     setTimeout(() => {
       setAvatar(URL.createObjectURL(file));
-      setAvatarFile(file); // store for API call
+      setAvatarFile(file);
       setIsUploadingImage(false);
     }, 500);
   };
@@ -72,19 +66,6 @@ export default function ProfileManagement() {
       toast.error(err?.data?.message || "Failed to update profile.");
     }
   };
-
-  // const handlePasswordChange2 = (e) => {
-  //   e.preventDefault();
-  //   if (passwords.new !== passwords.confirm) {
-  //     return toast.error("New passwords do not match!");
-  //   }
-  //   setIsChangingPassword(true);
-  //   setTimeout(() => {
-  //     setIsChangingPassword(false);
-  //     setPasswords({ current: "", new: "", confirm: "" });
-  //     toast.success("Password changed successfully!");
-  //   }, 1200);
-  // };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -141,10 +122,18 @@ export default function ProfileManagement() {
           <div
             className={`w-24 h-24 rounded-full border-4 border-white overflow-hidden bg-slate-200 ${isUploadingImage ? "opacity-50" : ""}`}
           >
+            {/* Spinner shown until image loads */}
+            {!imageLoaded && (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-[#652D8B] border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
             <img
               src={avatar}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0 absolute"}`}
               alt="Profile"
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)} // stop spinner even if image fails
             />
           </div>
           <FileUploader onFileSelect={handleAvatarSelect} accept="image/*">

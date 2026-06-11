@@ -6,9 +6,8 @@ import Button from "../components/Button";
 import { useLoginMutation } from "../redux/api/authApi";
 import { toast } from "react-toastify";
 
-
 const LoginPage = () => {
-  const [login] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation(); // 👈 get isLoading
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -23,56 +22,20 @@ const LoginPage = () => {
       return;
     }
 
-    const userInfo = {
-      email: email,
-      password: password,
-    };
     try {
-      const res = await login(userInfo).unwrap();
-      console.log(res)
+      const res = await login({ email, password }).unwrap();
       if (res?.data?.accessToken) {
         localStorage.setItem("token", res.data.accessToken);
-        navigate("/dashboard");
         toast.success(res.message || "Login Successful");
+        navigate("/dashboard");
       }
-      console.log();
     } catch (error) {
-      console.log(error);
       toast.error(error?.data?.message || "Something went wrong!");
     }
-
-
-    // try {
-    //   // .unwrap() allows us to use standard try/catch with RTK Query
-    //   const response = await login({ email, password }).unwrap();
-
-    //   if (response?.success) {
-    //     const token = response.data?.token;
-
-    //     // Save token to cookie (7 days if 'remember' is checked)
-    //     setCookie("NessasBrokenWorldAuthToken", token, {
-    //       path: "/",
-    //       maxAge: remember ? 7 * 24 * 60 * 60 : undefined,
-    //     });
-
-    //     // Store user data for UI personalization
-    //     localStorage.setItem("user", JSON.stringify(response.data.userData));
-
-    //     toast.success(response.message || "Login Successful");
-    //     navigate("/dashboard");
-    //   }
-    // } catch (err) {
-    //   // Handles 400/500 errors from the server
-    //   const errorMsg =
-    //     err?.data?.message || "Invalid credentials. Please try again.";
-    //   toast.error(errorMsg);
-    // }
-    // navigate("/dashboard");
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4">
-      {/* Subtle border and soft shadow for a premium feel */}
       <div className="bg-white p-10 rounded-2xl shadow-sm border border-gray-100 w-150">
         <div className="text-center mb-8">
           <Text
@@ -128,12 +91,20 @@ const LoginPage = () => {
           </div>
 
           <div className="pt-2">
-            <Button
-              buttonText={"Sign In"}
-              // disabled={isLoading}
-              // loading={isLoading} // Pass the API loading state here
-              className="w-full py-3 transition-all active:scale-[0.98]"
-            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-[#652D8B] text-white rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign In"
+              )}
+            </button>
           </div>
         </form>
       </div>

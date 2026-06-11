@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Users,
   ChevronDown,
   UserCheck,
   Monitor,
   UserRoundX,
-  User2,
+  User,
   TrendingUp,
 } from "lucide-react";
 import {
@@ -25,7 +25,7 @@ import { useGetDashboardAnalyticsQuery } from "../redux/api/dashboardApi";
 
 const DashboardPage = () => {
   const currentYear = new Date().getFullYear();
-  const { data, isLoading } = useGetDashboardAnalyticsQuery({
+  const { data } = useGetDashboardAnalyticsQuery({
     purchaseGrowthYear: currentYear,
     customerGrowthYear: currentYear,
   });
@@ -33,47 +33,6 @@ const DashboardPage = () => {
   const dashboardData = data?.data;
 
   console.log(dashboardData);
-  const users = [
-    {
-      key: "1",
-      name: "John Smith",
-      email: "john@example.com",
-      phone: "+880 1840560614",
-      location: "123 Main St, New York",
-      joined: "Jan 15, 2024",
-      status: "Active",
-    },
-    {
-      key: "2",
-      name: "John Smith",
-      email: "john@example.com",
-      phone: "+880 1840560614",
-      location: "123 Main St, New York",
-      joined: "Jan 15, 2024",
-      status: "Suspended",
-    },
-    {
-      key: "3",
-      name: "John Smith",
-      email: "john@example.com",
-      phone: "+880 1840560614",
-      location: "123 Main St, New York",
-      joined: "Jan 15, 2024",
-      status: "Active",
-    },
-  ];
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = async () => {
-
-  };
 
   // --- API INTEGRATION ENDS HERE ---
 
@@ -89,13 +48,10 @@ const DashboardPage = () => {
             Monitor and analyse your MesseMatch application
           </p>
         </div>
-
       </header>
 
       {/* Top Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-
-
         <>
           <StatCard
             title="Total Users"
@@ -110,10 +66,10 @@ const DashboardPage = () => {
           <StatCard
             title="Total Employees"
             value={dashboardData?.summary?.staff || 0}
-            Icon={User2}
+            Icon={User}
           />
           <StatCard
-            title="Total Metlas"
+            title="Total Metals"
             value={dashboardData?.summary?.totalMetals || 0}
             Icon={TrendingUp}
           />
@@ -136,20 +92,15 @@ const DashboardPage = () => {
         />
       </div>
 
-
       {/* Recent Users Table */}
       <div>
         <BannerUploader />
       </div>
-
     </div>
   );
 };
 
-// ... Rest of your existing components (IndependentChartCard, StatCard, Skeletons) remain exactly the same
-const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
-
-
+const IndependentChartCard = ({ title, type, chartType }) => {
   const STATIC_DASHBOARD_DATA = {
     2024: [
       { month: "January", count: 120 },
@@ -197,15 +148,12 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
 
   const [year, setYear] = useState(2026);
 
-
   const startYear = 2024;
   const endYear = 2050;
   const years = Array.from(
     { length: endYear - startYear + 1 },
     (_, i) => startYear + i,
   );
-
-
 
   const chartData =
     STATIC_DASHBOARD_DATA?.[year]?.map((item) => ({
@@ -251,13 +199,7 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
           {chartType === "area" ? (
             <AreaChart data={chartData}>
               <defs>
-                <linearGradient
-                  id={`color${type}`}
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
+                <linearGradient id={`color${type}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#0f172a" stopOpacity={0.08} />
                   <stop offset="95%" stopColor="#0f172a" stopOpacity={0} />
                 </linearGradient>
@@ -331,16 +273,14 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
           )}
         </ResponsiveContainer>
         {/* )} */}
-
       </div>
-
     </div>
   );
 };
 
 const StatCard = ({ title, value, Icon }) => (
   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex gap-5 items-start transition-all hover:shadow-md hover:-translate-y-1 group">
-    <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100  group-hover:text-white transition-all duration-300">
+    <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100 group-hover:text-white transition-all duration-300">
       <Icon size={22} className="text-[#652D8B]" />
     </div>
     <div>
@@ -351,7 +291,6 @@ const StatCard = ({ title, value, Icon }) => (
         {value}
       </h3>
     </div>
-
   </div>
 );
 
@@ -367,19 +306,22 @@ const SkeletonStatCard = () => (
   </div>
 );
 
-const SkeletonChart = () => (
-  <div className="w-full h-full flex flex-col justify-end gap-4 animate-pulse pt-4">
-    <div className="flex items-end justify-between gap-2 h-full px-2">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="bg-slate-100 w-full rounded-t-md"
-          style={{ height: `${Math.random() * 60 + 20}%` }}
-        ></div>
-      ))}
+const SkeletonChart = () => {
+  const heights = [45, 70, 30, 80, 55, 65];
+  return (
+    <div className="w-full h-full flex flex-col justify-end gap-4 animate-pulse pt-4">
+      <div className="flex items-end justify-between gap-2 h-full px-2">
+        {heights.map((h, i) => (
+          <div
+            key={i}
+            className="bg-slate-100 w-full rounded-t-md"
+            style={{ height: `${h}%` }}
+          />
+        ))}
+      </div>
+      <div className="h-4 w-full bg-slate-50 rounded" />
     </div>
-    <div className="h-4 w-full bg-slate-50 rounded"></div>
-  </div>
-);
+  );
+};
 
 export default DashboardPage;

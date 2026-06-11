@@ -28,6 +28,25 @@ export const profileApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    getAllUsers: builder.query({
+      query: ({ page = 1, limit = 10, searchTerm = "", status = "" } = {}) => {
+        const params = new URLSearchParams();
+        params.append("page", page);
+        params.append("limit", limit);
+        if (searchTerm) params.append("searchTerm", searchTerm);
+        if (status) params.append("status", status);
+        return { url: `/users/all?${params.toString()}`, method: "GET" };
+      },
+      providesTags: ["Users"],
+    }),
+    updateUserStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/auth/update-status/${id}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["Users"], 
+    }),
   }),
 });
 
@@ -35,4 +54,6 @@ export const {
   useGetProfileQuery,
   useUpdateProfileMutation,
   useChangePasswordMutation,
+  useGetAllUsersQuery,
+  useUpdateUserStatusMutation,
 } = profileApi;
