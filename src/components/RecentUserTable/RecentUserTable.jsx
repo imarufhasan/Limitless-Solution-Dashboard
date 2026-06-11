@@ -7,6 +7,73 @@ import { useUpdateUserStatusMutation } from "../../redux/api/profileApi";
 const DEFAULT_AVATAR =
   "https://ui-avatars.com/api/?background=652D8B&color=fff&name=";
 
+// ---- Skeleton shimmer ----
+function Skeleton({ className = "" }) {
+  return (
+    <div
+      className={`rounded ${className}`}
+      style={{
+        background:
+          "linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)",
+        backgroundSize: "200% 100%",
+        animation: "shimmer 1.4s infinite linear",
+      }}
+    />
+  );
+}
+
+if (
+  typeof document !== "undefined" &&
+  !document.getElementById("shimmer-style")
+) {
+  const style = document.createElement("style");
+  style.id = "shimmer-style";
+  style.textContent = `
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function TableSkeletonRows({ rows = 8 }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <tr key={i} className="border-b border-gray-100">
+          <td className="px-4 py-3">
+            <Skeleton className="w-10 h-10 rounded-full" />
+          </td>
+          <td className="px-4 py-3">
+            <Skeleton className="h-4 w-32 mb-2" />
+            <Skeleton className="h-3 w-44" />
+          </td>
+          <td className="px-4 py-3">
+            <Skeleton className="h-4 w-28" />
+          </td>
+          <td className="px-4 py-3">
+            <Skeleton className="h-4 w-24" />
+          </td>
+          <td className="px-4 py-3">
+            <Skeleton className="h-4 w-20" />
+          </td>
+          {/* Role badge skeleton */}
+          <td className="px-4 py-3">
+            <Skeleton className="h-6 w-14 rounded-full" />
+          </td>
+          <td className="px-4 py-3">
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </td>
+          <td className="px-4 py-3">
+            <Skeleton className="h-5 w-5 rounded" />
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}
+
 function UserAvatar({ src, name }) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -22,7 +89,9 @@ function UserAvatar({ src, name }) {
       <img
         src={imgSrc}
         alt={name}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
         onLoad={() => setLoaded(true)}
         onError={() => {
           setError(true);
@@ -43,8 +112,6 @@ function StatusModal({ user, onClose }) {
   const handleConfirm = async () => {
     try {
       const reqData = { id: user._id, status: targetStatus };
-      console.log("req data: ", reqData);
-
       await updateUserStatus(reqData).unwrap();
       toast.success(
         `User ${targetStatus === "blocked" ? "blocked" : "activated"} successfully!`,
@@ -59,7 +126,9 @@ function StatusModal({ user, onClose }) {
     <Modal open={!!user} onCancel={onClose} footer={null} centered width={400}>
       <div className="text-center py-4">
         <div
-          className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isActive ? "bg-red-100" : "bg-green-100"}`}
+          className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+            isActive ? "bg-red-100" : "bg-green-100"
+          }`}
         >
           {isActive ? (
             <StopOutlined style={{ fontSize: 28, color: "red" }} />
@@ -100,6 +169,24 @@ function StatusModal({ user, onClose }) {
         </div>
       </div>
     </Modal>
+  );
+}
+
+// ---- Role badge ----
+function RoleBadge({ role }) {
+  const styles =
+    role === "admin"
+      ? "bg-purple-100 text-[#652D8B]"
+      : role === "staff"
+        ? "bg-blue-100 text-blue-700"
+        : "bg-gray-100 text-gray-500";
+
+  return (
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${styles}`}
+    >
+      {role || "—"}
+    </span>
   );
 }
 
@@ -151,6 +238,12 @@ const RecentUsersTable = ({ users, isLoading }) => {
           : "—",
     },
     {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (role) => <RoleBadge role={role} />,
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -188,12 +281,45 @@ const RecentUsersTable = ({ users, isLoading }) => {
     },
   ];
 
+  if (isLoading) {
+    return (
+      <div className="w-full overflow-x-auto rounded-lg border border-gray-100">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              {[
+                "#",
+                "User",
+                "Phone Number",
+                "Location",
+                "Joined",
+                "Role",
+                "Status",
+                "Actions",
+              ].map((col) => (
+                <th
+                  key={col}
+                  className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide"
+                >
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-50">
+            <TableSkeletonRows rows={8} />
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   return (
     <>
       <Table
         columns={columns}
         dataSource={users}
-        loading={isLoading}
+        loading={false}
         pagination={false}
         rowKey="_id"
       />

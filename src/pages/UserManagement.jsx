@@ -8,13 +8,13 @@ export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeStatus, setActiveStatus] = useState(""); // 👈 empty = All Users
+  const [activeStatus, setActiveStatus] = useState("");
 
   const { data, isLoading } = useGetAllUsersQuery({
-    page: currentPage, // 👈 was hardcoded to 1
+    page: currentPage,
     limit: 10,
     searchTerm,
-    status: activeStatus, // 👈 was hardcoded to "active"
+    status: activeStatus,
   });
 
   const users = data?.data || [];
@@ -68,7 +68,7 @@ export default function UserManagement() {
           {[
             { label: "All Users", value: "" },
             { label: "Active", value: "active" },
-            { label: "Blocked", value: "blocked" }, // 👈 label changed, value "blocked"
+            { label: "Blocked", value: "blocked" },
           ].map(({ label, value }) => (
             <button
               key={label}
