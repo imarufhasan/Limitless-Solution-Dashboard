@@ -1,82 +1,135 @@
 import React, { useState } from "react";
-import { Camera, Eye, EyeOff, User, Mail } from "lucide-react";
+import { Camera, Eye, EyeOff, User, Mail, Phone, MapPin } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Components
 import { FileUploader } from "../components/FileUploader";
 import { ProfileSkeleton } from "../components/shimmer/ProfileSkeleton";
+import {
+  useChangePasswordMutation,
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+} from "../redux/api/profileApi";
 
 export default function ProfileManagement() {
   const [activeTab, setActiveTab] = useState("edit-profile");
 
-  // ---- STATIC PROFILE DATA ----
-  const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Admin",
-    avatar: "https://via.placeholder.com/150",
-  });
+  const { data, isLoading, isError, error } = useGetProfileQuery();
+  const profile = data?.data;
 
+  const [updateProfile, { isLoading: isUpdatingProfile }] =
+    useUpdateProfileMutation();
+
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null); // actual File for upload
+  const [initialized, setInitialized] = useState(false);
+
+  // add mutation hook
+  const [changePassword, { isLoading: isChangingPassword }] =
+    useChangePasswordMutation();
+
+  // update passwords state — match API body
   const [passwords, setPasswords] = useState({
-    current: "",
-    new: "",
-    confirm: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
-
+  // const [passwords, setPasswords] = useState({
+  //   current: "",
+  //   new: "",
+  //   confirm: "",
+  // });
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  // const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  // ---- HANDLERS ----
-
-  // Profile Image (local preview only)
   const handleAvatarSelect = (file) => {
     if (file.size > 2 * 1024 * 1024) {
       return toast.error("File is too large. Max 2MB allowed.");
     }
-
     setIsUploadingImage(true);
-
     setTimeout(() => {
-      const previewUrl = URL.createObjectURL(file);
-      setProfileData((prev) => ({ ...prev, avatar: previewUrl }));
+      setAvatar(URL.createObjectURL(file));
+      setAvatarFile(file); // store for API call
       setIsUploadingImage(false);
-      toast.success("Profile picture updated!");
-    }, 1000);
+    }, 500);
   };
 
-  // Update Name (mock)
-  const handleUpdateName = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setIsUpdatingProfile(true);
-
-    setTimeout(() => {
-      setIsUpdatingProfile(false);
+    try {
+      await updateProfile({
+        name,
+        address,
+        phoneNumber,
+        profileImage: avatarFile, // null if not changed
+      }).unwrap();
       toast.success("Profile updated successfully!");
-    }, 1000);
+      setAvatarFile(null);
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update profile.");
+    }
   };
 
-  // Change Password (mock)
-  const handlePasswordChange = (e) => {
-    e.preventDefault();
+  // const handlePasswordChange2 = (e) => {
+  //   e.preventDefault();
+  //   if (passwords.new !== passwords.confirm) {
+  //     return toast.error("New passwords do not match!");
+  //   }
+  //   setIsChangingPassword(true);
+  //   setTimeout(() => {
+  //     setIsChangingPassword(false);
+  //     setPasswords({ current: "", new: "", confirm: "" });
+  //     toast.success("Password changed successfully!");
+  //   }, 1200);
+  // };
 
-    if (passwords.new !== passwords.confirm) {
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (passwords.newPassword !== passwords.confirmPassword) {
       return toast.error("New passwords do not match!");
     }
-
-    setIsChangingPassword(true);
-
-    setTimeout(() => {
-      setIsChangingPassword(false);
-      setPasswords({ current: "", new: "", confirm: "" });
+    try {
+      await changePassword({
+        oldPassword: passwords.oldPassword,
+        newPassword: passwords.newPassword,
+      }).unwrap();
       toast.success("Password changed successfully!");
-    }, 1200);
+      setPasswords({ oldPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to change password.");
+    }
   };
 
-  // Simulate loading (optional)
-  const isLoading = false;
+  console.log("isError:", isError);
+  console.log("error:", error);
+  console.log("token:", localStorage.getItem("token"));
+
+  // Guards
   if (isLoading) return <ProfileSkeleton />;
+  if (isError)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        Failed to load profile. Please try again.
+      </div>
+    );
+  if (!data?.data)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-400">
+        No profile data found.
+      </div>
+    );
+
+  // Safe init after guards
+  if (!initialized) {
+    setName(profile.name || "");
+    setAddress(profile.address || "");
+    setPhoneNumber(profile.phoneNumber || "");
+    setAvatar(profile.profileImage || "");
+    setInitialized(true);
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-6 md:pt-20 font-sans text-slate-800">
@@ -86,17 +139,14 @@ export default function ProfileManagement() {
       <div className="w-full max-w-200 bg-[#652D8B] rounded-[2.5rem] p-8 mb-10 relative flex flex-col items-center shadow-xl">
         <div className="relative">
           <div
-            className={`w-24 h-24 rounded-full border-4 border-white overflow-hidden bg-slate-200 ${
-              isUploadingImage ? "opacity-50" : ""
-            }`}
+            className={`w-24 h-24 rounded-full border-4 border-white overflow-hidden bg-slate-200 ${isUploadingImage ? "opacity-50" : ""}`}
           >
             <img
-              src={profileData.avatar}
+              src={avatar}
               className="w-full h-full object-cover"
               alt="Profile"
             />
           </div>
-
           <FileUploader onFileSelect={handleAvatarSelect} accept="image/*">
             <div className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow-md cursor-pointer">
               {isUploadingImage ? (
@@ -107,13 +157,10 @@ export default function ProfileManagement() {
             </div>
           </FileUploader>
         </div>
-
         <div className="text-center mt-4">
-          <h2 className="text-2xl font-bold text-white">
-            {profileData.name}
-          </h2>
+          <h2 className="text-2xl font-bold text-white">{name}</h2>
           <p className="text-gray-400 text-sm uppercase tracking-wider">
-            {profileData.role}
+            {profile.role}
           </p>
         </div>
       </div>
@@ -138,20 +185,30 @@ export default function ProfileManagement() {
       {/* Forms */}
       <div className="w-full max-w-125">
         {activeTab === "edit-profile" ? (
-          <form onSubmit={handleUpdateName} className="space-y-6">
+          <form onSubmit={handleUpdateProfile} className="space-y-6">
             <FormInput
               label="Full Name"
               icon={<User size={18} />}
-              value={profileData.name}
-              onChange={(e) =>
-                setProfileData({ ...profileData, name: e.target.value })
-              }
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
             <FormInput
               label="Email Address"
               icon={<Mail size={18} />}
-              value={profileData.email}
+              value={profile.email || ""}
               readOnly
+            />
+            <FormInput
+              label="Phone Number"
+              icon={<Phone size={18} />}
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+            <FormInput
+              label="Address"
+              icon={<MapPin size={18} />}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
             <button
               type="submit"
@@ -165,23 +222,23 @@ export default function ProfileManagement() {
           <form onSubmit={handlePasswordChange} className="space-y-6">
             <PasswordInput
               label="Current Password"
-              value={passwords.current}
+              value={passwords.oldPassword}
               onChange={(e) =>
-                setPasswords({ ...passwords, current: e.target.value })
+                setPasswords({ ...passwords, oldPassword: e.target.value })
               }
             />
             <PasswordInput
               label="New Password"
-              value={passwords.new}
+              value={passwords.newPassword}
               onChange={(e) =>
-                setPasswords({ ...passwords, new: e.target.value })
+                setPasswords({ ...passwords, newPassword: e.target.value })
               }
             />
             <PasswordInput
               label="Confirm New Password"
-              value={passwords.confirm}
+              value={passwords.confirmPassword}
               onChange={(e) =>
-                setPasswords({ ...passwords, confirm: e.target.value })
+                setPasswords({ ...passwords, confirmPassword: e.target.value })
               }
             />
             <button
@@ -198,8 +255,6 @@ export default function ProfileManagement() {
   );
 }
 
-// ---- SUB COMPONENTS ----
-
 function FormInput({ label, value, onChange, icon, readOnly }) {
   return (
     <div className="flex flex-col gap-2">
@@ -209,9 +264,7 @@ function FormInput({ label, value, onChange, icon, readOnly }) {
           value={value}
           onChange={onChange}
           readOnly={readOnly}
-          className={`w-full p-4 pl-12 rounded-xl border ${
-            readOnly ? "bg-gray-100" : "bg-white"
-          }`}
+          className={`w-full p-4 pl-12 rounded-xl border ${readOnly ? "bg-gray-100" : "bg-white"}`}
         />
         <div className="absolute left-4 inset-y-0 flex items-center text-gray-400">
           {icon}

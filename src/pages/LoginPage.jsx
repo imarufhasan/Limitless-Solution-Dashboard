@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 
 const LoginPage = () => {
-  const [login, { isLoading }] = useLoginMutation();
+  const [login] = useLoginMutation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -38,6 +38,7 @@ const LoginPage = () => {
       console.log();
     } catch (error) {
       console.log(error);
+      toast.error(error?.data?.message || "Something went wrong!");
     }
 
 
