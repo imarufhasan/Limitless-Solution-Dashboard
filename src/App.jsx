@@ -8,7 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import VerifyCodePage from "./pages/VerifyCodePage";
 import SetNewPasswordPage from "./pages/SetNewPasswordPage";
-import Layout from "./pages/Layout"; 
+import Layout from "./pages/Layout";
 import DashboardPage from "./pages/Dashboard";
 import AccountSettings from "./pages/AccountSettings";
 import EditProfile from "./pages/EditProfile";
@@ -20,13 +20,15 @@ import EmployeeManagement from "./pages/EmployeeManagement";
 import RequestOrder from "./pages/RequestOrder/RequestOrder";
 import Order from "./pages/Order";
 import Messages from "./pages/Messages";
+import ReviewQuotePage from "./pages/ReviewQuotePage";
+import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <Router>
       <Routes>
         <Route
           path="/"
-          element={ <Navigate to="/login" />} />
+          element={<Navigate to="/login" />} />
 
         {/* Routes without Sidebar */}
         <Route path="/login" element={<LoginPage />} />
@@ -38,17 +40,19 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <Layout>
-              <DashboardPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <DashboardPage />
+              </Layout>
+            </ProtectedRoute>
           }
         />
-      
+
         <Route
           path="/user-management"
           element={
             <Layout>
-              <UserManagement/>
+              <UserManagement />
             </Layout>
           }
         />
@@ -56,16 +60,16 @@ function App() {
           path="/add-metal-price"
           element={
             <Layout>
-              <MetalPrice/>
+              <MetalPrice />
             </Layout>
           }
         />
-      
+
         <Route
           path="/requested-orders"
           element={
             <Layout>
-              <RequestOrder/>
+              <RequestOrder />
             </Layout>
           }
         />
@@ -93,10 +97,18 @@ function App() {
             </Layout>
           }
         />
-     
-     
-      
-       
+        <Route
+          path="/order-details"
+          element={
+            <Layout>
+              <ReviewQuotePage />
+            </Layout>
+          }
+        />
+
+
+
+
         <Route
           path="/accountsettings"
           element={

@@ -5,6 +5,7 @@ import {
   User,
 } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const tabs = [
   "All Orders",
@@ -52,6 +53,7 @@ const orders = [
 export default function Order() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("All Orders");
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-4 md:p-6">
@@ -244,7 +246,7 @@ export default function Order() {
                 May 15, 2026
               </div>
 
-              <button className="h-10 px-5 rounded-xl bg-[#F3EDF9] text-[#111827] text-sm font-medium hover:bg-[#ebe1f8] transition-all">
+              <button onClick={() => navigate("/order-details")} className="h-10 px-5 rounded-xl bg-[#F3EDF9] text-[#111827] text-sm font-medium hover:bg-[#ebe1f8] transition-all">
                 View Details
               </button>
             </div>

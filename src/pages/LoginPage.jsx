@@ -1,11 +1,14 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Text from "../components/Text";
 import Inputbox from "../components/InputBox";
 import Button from "../components/Button";
+import { useLoginMutation } from "../redux/api/authApi";
+import { toast } from "react-toastify";
 
 
 const LoginPage = () => {
+  const [login, { isLoading }] = useLoginMutation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -15,10 +18,28 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (!email || !password) {
-    //   toast.error("Please fill in all fields");
-    //   return;
-    // }
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const userInfo = {
+      email: email,
+      password: password,
+    };
+    try {
+      const res = await login(userInfo).unwrap();
+      console.log(res)
+      if (res?.data?.accessToken) {
+        localStorage.setItem("token", res.data.accessToken);
+        navigate("/dashboard");
+        toast.success(res.message || "Login Successful");
+      }
+      console.log();
+    } catch (error) {
+      console.log(error);
+    }
+
 
     // try {
     //   // .unwrap() allows us to use standard try/catch with RTK Query
@@ -45,7 +66,7 @@ const LoginPage = () => {
     //     err?.data?.message || "Invalid credentials. Please try again.";
     //   toast.error(errorMsg);
     // }
-    navigate("/dashboard");
+    // navigate("/dashboard");
   };
 
   return (

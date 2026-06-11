@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Users,
   ChevronDown,
@@ -21,10 +21,19 @@ import {
 } from "recharts";
 import RecentUsersTable from "../components/RecentUserTable/RecentUserTable";
 import BannerUploader from "../components/Banneruploader";
+import { useGetDashboardAnalyticsQuery } from "../redux/api/dashboardApi";
 
 const DashboardPage = () => {
+  const currentYear = new Date().getFullYear();
+  const { data, isLoading } = useGetDashboardAnalyticsQuery({
+    purchaseGrowthYear: currentYear,
+    customerGrowthYear: currentYear,
+  });
 
-const users = [
+  const dashboardData = data?.data;
+
+  console.log(dashboardData);
+  const users = [
     {
       key: "1",
       name: "John Smith",
@@ -77,10 +86,10 @@ const users = [
             Admin Dashboard
           </h1>
           <p className="text-slate-500 mt-1 text-sm md:text-base">
-           Monitor and analyse your MesseMatch application
+            Monitor and analyse your MesseMatch application
           </p>
         </div>
-     
+
       </header>
 
       {/* Top Stat Cards */}
@@ -90,22 +99,22 @@ const users = [
         <>
           <StatCard
             title="Total Users"
-            value={1230}
+            value={dashboardData?.summary?.totalUsers || 0}
             Icon={Users}
           />
           <StatCard
             title="Total Customers"
-            value={600}
+            value={dashboardData?.summary?.customer || 0}
             Icon={UserCheck}
           />
           <StatCard
             title="Total Employees"
-            value={250}
+            value={dashboardData?.summary?.staff || 0}
             Icon={User2}
           />
           <StatCard
             title="Total Metlas"
-            value={"2230"}
+            value={dashboardData?.summary?.totalMetals || 0}
             Icon={TrendingUp}
           />
         </>
@@ -128,9 +137,9 @@ const users = [
       </div>
 
 
-       {/* Recent Users Table */}
+      {/* Recent Users Table */}
       <div>
-       <BannerUploader/>
+        <BannerUploader />
       </div>
 
     </div>
@@ -331,7 +340,7 @@ const IndependentChartCard = ({ title, type, dataKey, chartType }) => {
 
 const StatCard = ({ title, value, Icon }) => (
   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex gap-5 items-start transition-all hover:shadow-md hover:-translate-y-1 group">
-     <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100  group-hover:text-white transition-all duration-300">
+    <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100  group-hover:text-white transition-all duration-300">
       <Icon size={22} className="text-[#652D8B]" />
     </div>
     <div>
@@ -342,7 +351,7 @@ const StatCard = ({ title, value, Icon }) => (
         {value}
       </h3>
     </div>
-   
+
   </div>
 );
 
