@@ -6,7 +6,7 @@ import {
   Search,
   XCircle,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGetAllOrdersQuery } from "../../redux/api/orderApi";
 
 const tabs = [
@@ -37,6 +37,16 @@ export default function RequestOrder() {
   });
 
   const orders = data?.data || [];
+
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -81,16 +91,14 @@ export default function RequestOrder() {
       year: "numeric",
     });
 
-  const now = useMemo(() => Date.now(), []);
-
   const getTimeAgo = (date) => {
-  const diff = Math.floor((now - new Date(date).getTime()) / 60000);
+    const diff = Math.floor((now - new Date(date).getTime()) / 60000);
 
-  if (diff < 60) return `${diff} min ago`;
-  if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
+    if (diff < 60) return `${diff} min ago`;
+    if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
 
-  return `${Math.floor(diff / 1440)} days ago`;
-};
+    return `${Math.floor(diff / 1440)} days ago`;
+  };
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-6">
