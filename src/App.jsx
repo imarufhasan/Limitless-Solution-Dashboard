@@ -26,9 +26,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
 
         {/* Routes without Sidebar */}
         <Route path="/login" element={<LoginPage />} />
@@ -98,16 +96,13 @@ function App() {
           }
         />
         <Route
-          path="/order-details"
+          path="/order-details/:id"
           element={
             <Layout>
               <ReviewQuotePage />
             </Layout>
           }
         />
-
-
-
 
         <Route
           path="/accountsettings"
