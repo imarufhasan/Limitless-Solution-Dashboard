@@ -6,100 +6,91 @@ import {
   Search,
   XCircle,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useGetAllOrdersQuery } from "../../redux/api/orderApi";
 
 const tabs = [
-  {
-    id: "all",
-    label: "All Requests",
-    icon: <FileText size={14} />,
-  },
-  {
-    id: "pending",
-    label: "Pending",
-    icon: <Clock3 size={14} />,
-  },
-  {
-    id: "offer",
-    label: "Offer Sent",
-    icon: <Clock3 size={14} />,
-  },
-  {
-    id: "accepted",
-    label: "Accepted",
-    icon: <CheckCircle size={14} />,
-  },
-  {
-    id: "rejected",
-    label: "Rejected",
-    icon: <XCircle size={14} />,
-  },
+  { id: "all", label: "All Requests", icon: <FileText size={14} /> },
+  { id: "pending", label: "Pending", icon: <Clock3 size={14} /> },
+  { id: "assigned", label: "Assigned", icon: <Clock3 size={14} /> },
+  { id: "accepted", label: "Accepted", icon: <CheckCircle size={14} /> },
+  { id: "cancelled", label: "Cancelled", icon: <XCircle size={14} /> },
 ];
 
-const orders = [
-  {
-    id: "#000002",
-    name: "Priya Sharma",
-    status: "Pending",
-    statusColor: "bg-[#F3E8FF] text-[#7E22CE]",
-    category: "Metal Sell",
-    item: "Car",
-    vin: "2HGBH41JXMN109187",
-    time: "15 min ago",
-    date: "May 15, 2026",
-    amount: "$32,000",
-    button: "Review & Send Offer",
-    buttonColor: "bg-[#652D8B] text-white",
-  },
-  {
-    id: "#000003",
-    name: "Amit Patel",
-    status: "Offer Sent",
-    statusColor: "bg-[#DBEAFE] text-[#2563EB]",
-    category: "Sell My Call",
-    item: "Car",
-    vin: "2HGBH41JXMN109187",
-    time: "45 min ago",
-    date: "May 15, 2026",
-    amount: "$2,000",
-    button: "View Details",
-    buttonColor: "bg-[#F3EDF9] text-[#111827]",
-  },
-  {
-    id: "#000003",
-    name: "Amit Patel",
-    status: "Accepted",
-    statusColor: "bg-[#D1FAE5] text-[#059669]",
-    category: "Sell My Call",
-    item: "Car / Sell My Call",
-    vin: "2HGBH41JXMN109187",
-    time: "3 hours ago",
-    date: "May 15, 2026",
-    amount: "$2,000",
-    button: "View Details",
-    secondButton: "Assign Employee",
-    buttonColor: "bg-[#F3EDF9] text-[#111827]",
-    secondButtonColor: "bg-[#10B981] text-white",
-  },
-  {
-    id: "#000004",
-    name: "Meera Iyer",
-    status: "Rejected",
-    statusColor: "bg-[#E5E7EB] text-[#6B7280]",
-    category: "Sell My Call",
-    item: "Car",
-    vin: "2HGBH41JXMN109187",
-    time: "5 hours ago",
-    date: "May 15, 2026",
-    amount: "$500",
-    button: "View Details",
-    buttonColor: "bg-[#F3EDF9] text-[#111827]",
-  },
-];
+const statusMap = {
+  all: undefined,
+  pending: "pending",
+  assigned: "assigned",
+  accepted: "accepted",
+  cancelled: "cancelled",
+};
 
 export default function RequestOrder() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+
+  const { data } = useGetAllOrdersQuery({
+    page: 1,
+    limit: 10,
+    status: statusMap[activeTab],
+    searchTerm: search || undefined,
+  });
+
+  const orders = data?.data || [];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-[#F3E8FF] text-[#7E22CE]";
+      case "accepted":
+        return "bg-[#D1FAE5] text-[#059669]";
+      case "assigned":
+        return "bg-[#DBEAFE] text-[#2563EB]";
+      case "cancelled":
+        return "bg-[#E5E7EB] text-[#6B7280]";
+      default:
+        return "bg-[#F3EDF9] text-[#374151]";
+    }
+  };
+
+  const formatAmount = (order) => {
+    if (order.orderType === "Vehicle") {
+      return `$${(order.totalPrice || 0).toLocaleString()}`;
+    }
+
+    return `$${(order.subTotal || 0).toLocaleString()}`;
+  };
+
+  const getActionButton = (status) => {
+    switch (status) {
+      case "pending":
+        return "Review & Send Offer";
+      case "accepted":
+        return "Assign Employee";
+      case "assigned":
+        return "View Details";
+      default:
+        return "View Details";
+    }
+  };
+
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+  const now = useMemo(() => Date.now(), []);
+
+  const getTimeAgo = (date) => {
+  const diff = Math.floor((now - new Date(date).getTime()) / 60000);
+
+  if (diff < 60) return `${diff} min ago`;
+  if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
+
+  return `${Math.floor(diff / 1440)} days ago`;
+};
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-6">
@@ -153,78 +144,80 @@ export default function RequestOrder() {
 
       {/* Orders */}
       <div className="space-y-4">
-        {orders.map((order, index) => (
+        {orders.map((order) => (
           <div
-            key={index}
+            key={order.orderId}
             className="bg-white border border-[#E5E7EB] rounded-2xl p-5"
           >
-            {/* Top Section */}
             <div className="flex items-start justify-between">
-              {/* Left */}
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="bg-[#F3EDF9] text-[#374151] text-xs px-2 py-1 rounded-md font-medium">
-                    {order.id}
+                    {order.orderNumber}
                   </span>
 
                   <h2 className="text-[18px] font-semibold text-[#111827]">
-                    {order.name}
+                    {order.customerName}
                   </h2>
 
                   <span
-                    className={`text-xs font-medium px-3 py-1 rounded-full ${order.statusColor}`}
+                    className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
+                      order.status,
+                    )}`}
                   >
                     {order.status}
                   </span>
 
                   <span className="bg-[#F3EDF9] text-[#374151] text-xs px-3 py-1 rounded-full">
-                    {order.category}
+                    {order.orderType}
                   </span>
                 </div>
 
-                <p className="text-[#111827] text-sm mt-4">{order.item}</p>
-
-                <p className="text-xs text-[#9CA3AF] mt-2">
-                  VIN: {order.vin}
+                <p className="text-[#111827] text-sm mt-4">
+                  {order.orderType === "Vehicle"
+                    ? `${order.model || "Vehicle"} ${order.year || ""}`
+                    : order.items?.[0]?.name || "Metal"}
                 </p>
+
+                {order.vinNumber && (
+                  <p className="text-xs text-[#9CA3AF] mt-2">
+                    VIN: {order.vinNumber}
+                  </p>
+                )}
               </div>
 
-              {/* Right */}
               <div className="text-right">
-                <p className="text-xs text-[#9CA3AF]">{order.time}</p>
+                <p className="text-xs text-[#9CA3AF]">
+                  {getTimeAgo(order.createdAt)}
+                </p>
 
                 <p className="text-xs text-[#9CA3AF] mt-1">
-                  {order.date}
+                  {formatDate(order.createdAt)}
                 </p>
 
                 <h3 className="text-[28px] font-bold text-[#652D8B] mt-2">
-                  {order.amount}
+                  {formatAmount(order)}
                 </h3>
               </div>
             </div>
 
-            {/* Bottom */}
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#F3F4F6]">
               <div className="flex items-center gap-2 text-sm text-[#6B7280]">
                 <Eye size={16} />
-                4 images
+                {order.attachments?.length || 0} images
               </div>
 
-              <div className="flex items-center gap-3">
-                {order.secondButton && (
-                  <button
-                    className={`h-10.5 px-5 rounded-xl text-sm font-medium ${order.secondButtonColor}`}
-                  >
-                    {order.secondButton}
-                  </button>
-                )}
-
-                <button
-                  className={`h-10.5 px-5 rounded-xl text-sm font-medium ${order.buttonColor}`}
-                >
-                  {order.button}
-                </button>
-              </div>
+              <button
+                className={`h-10 px-5 rounded-xl text-sm font-medium ${
+                  order.status === "pending"
+                    ? "bg-[#652D8B] text-white"
+                    : order.status === "accepted"
+                      ? "bg-[#10B981] text-white"
+                      : "bg-[#F3EDF9] text-[#111827]"
+                }`}
+              >
+                {getActionButton(order.status)}
+              </button>
             </div>
           </div>
         ))}
