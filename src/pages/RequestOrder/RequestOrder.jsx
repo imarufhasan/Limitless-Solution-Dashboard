@@ -8,24 +8,27 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useGetAllOrdersQuery } from "../../redux/api/orderApi";
+import { useNavigate } from "react-router-dom";
 
 const tabs = [
   { id: "all", label: "All Requests", icon: <FileText size={14} /> },
   { id: "pending", label: "Pending", icon: <Clock3 size={14} /> },
-  { id: "assigned", label: "Assigned", icon: <Clock3 size={14} /> },
   { id: "accepted", label: "Accepted", icon: <CheckCircle size={14} /> },
+  { id: "assigned", label: "Assigned", icon: <Clock3 size={14} /> },
   { id: "cancelled", label: "Cancelled", icon: <XCircle size={14} /> },
 ];
 
 const statusMap = {
   all: undefined,
   pending: "pending",
-  assigned: "assigned",
   accepted: "accepted",
+  assigned: "assigned",
   cancelled: "cancelled",
 };
 
 export default function RequestOrder() {
+  
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
@@ -57,7 +60,7 @@ export default function RequestOrder() {
       case "assigned":
         return "bg-[#DBEAFE] text-[#2563EB]";
       case "cancelled":
-        return "bg-[#E5E7EB] text-[#6B7280]";
+        return "bg-[red] text-[#fff]";
       default:
         return "bg-[#F3EDF9] text-[#374151]";
     }
@@ -223,6 +226,7 @@ export default function RequestOrder() {
                       ? "bg-[#10B981] text-white"
                       : "bg-[#F3EDF9] text-[#111827]"
                 }`}
+                onClick={() => navigate(`/order-details/${order.orderId}`)}
               >
                 {getActionButton(order.status)}
               </button>

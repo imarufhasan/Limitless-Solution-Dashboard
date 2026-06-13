@@ -20,6 +20,14 @@ export const orderApi = baseApi.injectEndpoints({
       query: (id) => `/order/${id}`,
       providesTags: ["Order"],
     }),
+    sendVehicleQuote: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/order/vehicle/qoute/${id}`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Order", id }],
+    }),
   }),
 });
 
@@ -27,4 +35,5 @@ export const {
   useGetAllOrdersQuery,
   useGetOrderAnalyticsQuery,
   useGetOrderByIdQuery,
+  useSendVehicleQuoteMutation,
 } = orderApi;
