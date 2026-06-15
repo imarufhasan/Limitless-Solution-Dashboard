@@ -5,6 +5,8 @@ import {
   FileText,
   Search,
   XCircle,
+  Truck,
+  Package,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useGetAllOrdersQuery } from "../../redux/api/orderApi";
@@ -26,28 +28,107 @@ const statusMap = {
   cancelled: "cancelled",
 };
 
+// ─── Skeleton Card ─────────────────────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 animate-pulse">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="h-6 w-24 bg-gray-200 rounded-md" />
+            <div className="h-6 w-32 bg-gray-200 rounded-md" />
+            <div className="h-6 w-20 bg-gray-200 rounded-full" />
+            <div className="h-6 w-16 bg-gray-200 rounded-full" />
+          </div>
+          <div className="h-4 w-40 bg-gray-200 rounded mt-4" />
+          <div className="h-3 w-28 bg-gray-100 rounded mt-2" />
+        </div>
+        <div className="text-right ml-4">
+          <div className="h-3 w-20 bg-gray-100 rounded ml-auto" />
+          <div className="h-3 w-16 bg-gray-100 rounded mt-2 ml-auto" />
+          <div className="h-8 w-28 bg-gray-200 rounded mt-2 ml-auto" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#F3F4F6]">
+        <div className="h-4 w-20 bg-gray-100 rounded" />
+        <div className="h-10 w-36 bg-gray-200 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+// ─── Empty State ───────────────────────────────────────────────────────────────
+function EmptyState({ search, activeTab }) {
+  return (
+    <div className="bg-white border border-[#E5E7EB] rounded-2xl p-12 text-center">
+      <div className="w-14 h-14 bg-[#F3EDF9] rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <FileText size={24} className="text-[#652D8B]" />
+      </div>
+      <h3 className="text-[#111827] font-semibold text-base mb-1">
+        No requests found
+      </h3>
+      <p className="text-[#6B7280] text-sm">
+        {search
+          ? `No results for "${search}". Try a different name.`
+          : `There are no ${activeTab === "all" ? "" : activeTab} requests yet.`}
+      </p>
+    </div>
+  );
+}
+
+function DeliveryBadge({ type }) {
+  const isPickup = type === "pickup";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full font-medium ${
+        isPickup ? "bg-[#E0F2FE] text-[#0369A1]" : "bg-[#F0FDF4] text-[#15803D]"
+      }`}
+    >
+      {isPickup ? <Truck size={11} /> : <Package size={11} />}
+      {isPickup ? "Pickup" : "Drop-off"}
+    </span>
+  );
+}
+
 export default function RequestOrder() {
-  
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-
-  const { data } = useGetAllOrdersQuery({
-    page: 1,
-    limit: 10,
-    status: statusMap[activeTab],
-    searchTerm: search || undefined,
-  });
-
-  const orders = data?.data || [];
-
+  const [page, setPage] = useState(1);
+  const limit = 10;
   const [now, setNow] = useState(Date.now());
 
+  // Debounce search — wait 400ms after user stops typing
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(Date.now());
-    }, 60000);
+    const t = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+      setPage(1); // reset to page 1 on new search
+    }, 400);
+    return () => clearTimeout(t);
+  }, [search]);
 
+  // Reset page when tab changes
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
+
+  const { data, isLoading, isFetching } = useGetAllOrdersQuery({
+    page,
+    limit,
+    status: statusMap[activeTab],
+    searchTerm: debouncedSearch || undefined,
+  });
+
+  const orders = data?.data ?? [];
+  const total = data?.meta?.total ?? data?.pagination?.total ?? 0;
+  const totalPages = Math.ceil(total / limit);
+
+  const showSkeleton = isLoading || isFetching;
+
+  // Tick for "X min ago"
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -60,31 +141,68 @@ export default function RequestOrder() {
       case "assigned":
         return "bg-[#DBEAFE] text-[#2563EB]";
       case "cancelled":
-        return "bg-[red] text-[#fff]";
+        return "bg-red-500 text-white";
       default:
         return "bg-[#F3EDF9] text-[#374151]";
     }
   };
 
-  const formatAmount = (order) => {
-    if (order.orderType === "Vehicle") {
-      return `$${(order.totalPrice || 0).toLocaleString()}`;
+  const formatAmount = (order) =>
+    order.orderType === "Vehicle"
+      ? `$${(order.totalPrice || 0).toLocaleString()}`
+      : `$${(order.subTotal || 0).toLocaleString()}`;
+
+  // const getActionButton2 = (status) => {
+  //   switch (status) {
+  //     case "pending":
+  //       return "Review & Send Offer";
+  //     case "accepted":
+  //       return "Assign Employee";
+  //     default:
+  //       return "View Details";
+  //   }
+  // };
+  const getActionButton = (order) => {
+    if (order.status === "pending") {
+      return "Review & Send Offer";
     }
 
-    return `$${(order.subTotal || 0).toLocaleString()}`;
+    if (
+      order.status === "accepted" &&
+      order.orderType === "Vehicle" &&
+      order.deliveryType === "pickup"
+    ) {
+      return "Assign Employee";
+    }
+
+    return "View Details";
   };
 
-  const getActionButton = (status) => {
-    switch (status) {
-      case "pending":
-        return "Review & Send Offer";
-      case "accepted":
-        return "Assign Employee";
-      case "assigned":
-        return "View Details";
-      default:
-        return "View Details";
+  // const getActionStyle = (status) => {
+  //   switch (status) {
+  //     case "pending":
+  //       return "bg-[#652D8B] text-white";
+  //     case "accepted":
+  //       return "bg-[#10B981] text-white";
+  //     default:
+  //       return "bg-[#F3EDF9] text-[#111827]";
+  //   }
+  // };
+
+  const getActionStyle = (order) => {
+    if (order.status === "pending") {
+      return "bg-[#652D8B] text-white";
     }
+
+    if (
+      order.status === "accepted" &&
+      order.orderType === "Vehicle" &&
+      order.deliveryType === "pickup"
+    ) {
+      return "bg-[#10B981] text-white";
+    }
+
+    return "bg-[#F3EDF9] text-[#111827]";
   };
 
   const formatDate = (date) =>
@@ -96,10 +214,8 @@ export default function RequestOrder() {
 
   const getTimeAgo = (date) => {
     const diff = Math.floor((now - new Date(date).getTime()) / 60000);
-
     if (diff < 60) return `${diff} min ago`;
-    if (diff < 1440) return `${Math.floor(diff / 60)} hours ago`;
-
+    if (diff < 1440) return `${Math.floor(diff / 60)} hr ago`;
     return `${Math.floor(diff / 1440)} days ago`;
   };
 
@@ -110,7 +226,6 @@ export default function RequestOrder() {
         <h1 className="text-[22px] font-semibold text-[#111827]">
           Quote Requests
         </h1>
-
         <p className="text-sm text-[#6B7280] mt-1">
           Manage and review all scrap pickup quote requests
         </p>
@@ -118,13 +233,11 @@ export default function RequestOrder() {
 
       {/* Search & Tabs */}
       <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4 mb-5">
-        {/* Search */}
         <div className="relative mb-4">
           <Search
             size={18}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
           />
-
           <input
             type="text"
             placeholder="Search by customer name"
@@ -134,7 +247,6 @@ export default function RequestOrder() {
           />
         </div>
 
-        {/* Tabs */}
         <div className="flex flex-wrap gap-3">
           {tabs.map((tab) => (
             <button
@@ -153,87 +265,138 @@ export default function RequestOrder() {
         </div>
       </div>
 
-      {/* Orders */}
+      {/* Orders / Skeleton / Empty */}
       <div className="space-y-4">
-        {orders.map((order) => (
-          <div
-            key={order.orderId}
-            className="bg-white border border-[#E5E7EB] rounded-2xl p-5"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <span className="bg-[#F3EDF9] text-[#374151] text-xs px-2 py-1 rounded-md font-medium">
-                    {order.orderNumber}
-                  </span>
+        {showSkeleton ? (
+          // Show 4 skeleton cards while loading or fetching
+          Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+        ) : orders.length === 0 ? (
+          <EmptyState search={debouncedSearch} activeTab={activeTab} />
+        ) : (
+          orders.map((order) => (
+            <div
+              key={order._id ?? order.orderId}
+              className="bg-white border border-[#E5E7EB] rounded-2xl p-5"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="bg-[#F3EDF9] text-[#374151] text-xs px-2 py-1 rounded-md font-medium shrink-0">
+                      {order.orderNumber}
+                    </span>
+                    <h2 className="text-[18px] font-semibold text-[#111827] truncate">
+                      {order.customerName}
+                    </h2>
+                    <span
+                      className={`text-xs font-medium px-3 py-1 rounded-full shrink-0 ${getStatusColor(order.status)}`}
+                    >
+                      {order.status.charAt(0).toUpperCase() +
+                        order.status.slice(1)}
+                    </span>
+                    <span className="bg-[#F3EDF9] text-[#374151] text-xs px-3 py-1 rounded-full shrink-0">
+                      {order.orderType}
+                    </span>
 
-                  <h2 className="text-[18px] font-semibold text-[#111827]">
-                    {order.customerName}
-                  </h2>
+                    <DeliveryBadge type={order.deliveryType} />
+                  </div>
 
-                  <span
-                    className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(
-                      order.status,
-                    )}`}
-                  >
-                    {order.status}
-                  </span>
+                  <p className="text-[#111827] text-sm mt-4">
+                    {order.orderType === "Vehicle"
+                      ? `${order.model || "Vehicle"} ${order.year || ""}`
+                      : order.items?.[0]?.name || "Metal"}
+                  </p>
 
-                  <span className="bg-[#F3EDF9] text-[#374151] text-xs px-3 py-1 rounded-full">
-                    {order.orderType}
-                  </span>
+                  {order.vinNumber && (
+                    <p className="text-xs text-[#9CA3AF] mt-2">
+                      VIN: {order.vinNumber}
+                    </p>
+                  )}
                 </div>
 
-                <p className="text-[#111827] text-sm mt-4">
-                  {order.orderType === "Vehicle"
-                    ? `${order.model || "Vehicle"} ${order.year || ""}`
-                    : order.items?.[0]?.name || "Metal"}
-                </p>
-
-                {order.vinNumber && (
-                  <p className="text-xs text-[#9CA3AF] mt-2">
-                    VIN: {order.vinNumber}
+                <div className="text-right ml-4 shrink-0">
+                  <p className="text-xs text-[#9CA3AF]">
+                    {getTimeAgo(order.createdAt)}
                   </p>
-                )}
+                  <p className="text-xs text-[#9CA3AF] mt-1">
+                    {formatDate(order.createdAt)}
+                  </p>
+                  <h3 className="text-[28px] font-bold text-[#652D8B] mt-2">
+                    {formatAmount(order)}
+                  </h3>
+                </div>
               </div>
 
-              <div className="text-right">
-                <p className="text-xs text-[#9CA3AF]">
-                  {getTimeAgo(order.createdAt)}
-                </p>
-
-                <p className="text-xs text-[#9CA3AF] mt-1">
-                  {formatDate(order.createdAt)}
-                </p>
-
-                <h3 className="text-[28px] font-bold text-[#652D8B] mt-2">
-                  {formatAmount(order)}
-                </h3>
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#F3F4F6]">
+                <div className="flex items-center gap-2 text-sm text-[#6B7280]">
+                  <Eye size={16} />
+                  {order.attachments?.length || 0} images
+                </div>
+                <button
+                  className={`h-10 px-5 rounded-xl text-sm font-medium transition-opacity hover:opacity-90 ${getActionStyle(order)}`}
+                  onClick={() =>
+                    navigate(`/order-details/${order.orderId}?from=request`)
+                  }
+                >
+                  {getActionButton(order)}
+                </button>
               </div>
             </div>
-
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#F3F4F6]">
-              <div className="flex items-center gap-2 text-sm text-[#6B7280]">
-                <Eye size={16} />
-                {order.attachments?.length || 0} images
-              </div>
-
-              <button
-                className={`h-10 px-5 rounded-xl text-sm font-medium ${
-                  order.status === "pending"
-                    ? "bg-[#652D8B] text-white"
-                    : order.status === "accepted"
-                      ? "bg-[#10B981] text-white"
-                      : "bg-[#F3EDF9] text-[#111827]"
-                }`}
-                onClick={() => navigate(`/order-details/${order.orderId}`)}
-              >
-                {getActionButton(order.status)}
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
+
+      {/* Pagination */}
+      {!showSkeleton && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="h-9 px-4 rounded-xl text-sm font-medium bg-white border border-[#E5E7EB] text-[#374151] disabled:opacity-40 hover:border-[#652D8B] transition-colors"
+          >
+            Previous
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(
+              (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
+            )
+            .reduce((acc, p, idx, arr) => {
+              if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+              acc.push(p);
+              return acc;
+            }, [])
+            .map((p, i) =>
+              p === "..." ? (
+                <span
+                  key={`ellipsis-${i}`}
+                  className="text-[#9CA3AF] text-sm px-1"
+                >
+                  …
+                </span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`h-9 w-9 rounded-xl text-sm font-medium transition-colors ${
+                    page === p
+                      ? "bg-[#652D8B] text-white"
+                      : "bg-white border border-[#E5E7EB] text-[#374151] hover:border-[#652D8B]"
+                  }`}
+                >
+                  {p}
+                </button>
+              ),
+            )}
+
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="h-9 px-4 rounded-xl text-sm font-medium bg-white border border-[#E5E7EB] text-[#374151] disabled:opacity-40 hover:border-[#652D8B] transition-colors"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

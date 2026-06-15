@@ -28,6 +28,14 @@ export const orderApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "Order", id }],
     }),
+    sendMetalQuote: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/order/metal/qoute/${id}`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Order"],
+    }),
   }),
 });
 
@@ -36,4 +44,5 @@ export const {
   useGetOrderAnalyticsQuery,
   useGetOrderByIdQuery,
   useSendVehicleQuoteMutation,
+  useSendMetalQuoteMutation,
 } = orderApi;

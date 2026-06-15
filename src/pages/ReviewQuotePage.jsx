@@ -33,9 +33,10 @@ import {
   TeamOutlined,
   EnvironmentFilled,
 } from "@ant-design/icons";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import {
   useGetOrderByIdQuery,
+  useSendMetalQuoteMutation,
   useSendVehicleQuoteMutation,
 } from "../redux/api/orderApi";
 import {
@@ -352,6 +353,235 @@ function OfferSummary({ d }) {
   );
 }
 
+function OfferAcceptSendOffer({ d, orderId, onOfferSent }) {
+  const [api, contextHolder] = notification.useNotification();
+  const [mode, setMode] = useState("accept"); // "accept" | "counter"
+  const [counterAmount, setCounterAmount] = useState("");
+  const [sendMetalQuote, { isLoading: isSending }] =
+    useSendMetalQuoteMutation();
+
+  const materialsTotal = d?.subTotal ?? 0;
+
+  const handleSend = async () => {
+    try {
+      const isCounter = mode === "counter";
+      const body = {
+        isCustom: isCounter,
+        ...(isCounter && { qoutedPrice: Number(counterAmount) }),
+      };
+      const req = { id: orderId, body };
+      console.log("metal req data: ", req);
+
+      const res = await sendMetalQuote(req).unwrap();
+      if (res?.success) {
+        api.success({
+          message: isCounter ? "Counter offer sent!" : "Offer accepted!",
+          description: isCounter
+            ? `Your counter offer of $${Number(counterAmount).toLocaleString()} has been sent.`
+            : "The calculated offer has been accepted and sent to the customer.",
+          placement: "topRight",
+          duration: 3,
+        });
+
+        setTimeout(() => onOfferSent(), 1500);
+      }
+    } catch (err) {
+      api.error({
+        message: "Failed to send",
+        description:
+          err?.data?.message ?? "Something went wrong. Please try again.",
+        placement: "topRight",
+        duration: 4,
+      });
+    }
+  };
+
+  const canSend =
+    mode === "accept" || (mode === "counter" && counterAmount.trim() !== "");
+
+  return (
+    <>
+      {contextHolder}
+      <div
+        className="rounded-xl p-5 mb-4"
+        style={{
+          background: "linear-gradient(135deg, #6F3A92 80%, #9F6AD4 100%)",
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-4">
+          <FileTextOutlined style={{ color: "#d8b4fe", fontSize: 14 }} />
+          <span className="text-white font-semibold text-base">
+            Offer Summary
+          </span>
+        </div>
+
+        {/* Make/Model label placeholder (metals don't have model) */}
+        <p
+          style={{
+            color: "rgba(255,255,255,0.6)",
+            fontSize: 11,
+            marginBottom: 6,
+          }}
+        >
+          Materials Total
+        </p>
+
+        {/* Big total */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.12)",
+            borderRadius: 10,
+            padding: "10px 14px",
+            marginBottom: 16,
+          }}
+        >
+          <p
+            style={{ color: "#fff", fontWeight: 700, fontSize: 28, margin: 0 }}
+          >
+            ${materialsTotal.toLocaleString()}
+          </p>
+        </div>
+
+        {/* Breakdown */}
+        <div className="flex justify-between items-center mb-1">
+          <span style={{ color: "rgba(255,255,255,0.75)", fontSize: 13 }}>
+            Materials Total:
+          </span>
+          <span style={{ color: "#fff", fontSize: 13, fontWeight: 500 }}>
+            ${materialsTotal.toLocaleString()}
+          </span>
+        </div>
+
+        <Divider
+          style={{ borderColor: "rgba(255,255,255,0.2)", margin: "12px 0" }}
+        />
+
+        {/* Calculated offer */}
+        <p
+          style={{
+            color: "rgba(255,255,255,0.6)",
+            fontSize: 11,
+            marginBottom: 4,
+          }}
+        >
+          Calculated Offer
+        </p>
+        <p
+          style={{
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: 28,
+            margin: "0 0 16px",
+          }}
+        >
+          ${materialsTotal.toLocaleString()}
+        </p>
+
+        {/* Toggle: Accept / Counter */}
+        <div
+          style={{
+            display: "flex",
+            background: "rgba(255,255,255,0.12)",
+            borderRadius: 10,
+            padding: 4,
+            marginBottom: 16,
+            gap: 4,
+          }}
+        >
+          {["accept", "counter"].map((m) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              style={{
+                flex: 1,
+                padding: "9px 0",
+                borderRadius: 8,
+                border: "none",
+                background: mode === m ? "#fff" : "transparent",
+                color: mode === m ? "#6F3A92" : "rgba(255,255,255,0.75)",
+                fontWeight: mode === m ? 700 : 500,
+                fontSize: 13,
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+            >
+              {m === "accept" ? "Accept Offer" : "Counter Offer"}
+            </button>
+          ))}
+        </div>
+
+        {/* Counter input */}
+        {mode === "counter" && (
+          <div style={{ marginBottom: 16 }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: 11,
+                color: "rgba(255,255,255,0.75)",
+                marginBottom: 6,
+              }}
+            >
+              Your Counter Offer
+            </label>
+            <input
+              type="number"
+              placeholder="Enter your offer amount"
+              value={counterAmount}
+              onChange={(e) => setCounterAmount(e.target.value)}
+              style={{
+                width: "100%",
+                background: "rgba(255,255,255,0.15)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                borderRadius: 8,
+                padding: "10px 12px",
+                color: "#fff",
+                fontSize: 14,
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
+        )}
+
+        {/* CTA */}
+        <button
+          onClick={handleSend}
+          disabled={!canSend || isSending}
+          style={{
+            width: "100%",
+            background:
+              !canSend || isSending ? "rgba(255,255,255,0.2)" : "#fff",
+            color: !canSend || isSending ? "rgba(255,255,255,0.5)" : "#6F3A92",
+            border: "none",
+            borderRadius: 10,
+            padding: "12px 0",
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: !canSend || isSending ? "not-allowed" : "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            transition: "opacity 0.2s",
+          }}
+        >
+          {isSending ? (
+            <Spin size="small" style={{ marginRight: 6 }} />
+          ) : (
+            <SendOutlined style={{ fontSize: 13 }} />
+          )}
+          {isSending
+            ? "Sending…"
+            : mode === "counter"
+              ? "Send Counter Offer"
+              : "Accept & Send Offer"}
+        </button>
+      </div>
+    </>
+  );
+}
+
 // ─── Dates card ───────────────────────────────────────────────────────────────
 
 function DatesCard({ d }) {
@@ -403,16 +633,18 @@ function PricingCalculator({ d, orderId, onOfferSent }) {
 
   const handleSendOffer = async () => {
     try {
+      const num = (v) => Number(String(v).replace(/,/g, "")) || 0;
+
       const body = {
-        model: fields.makeModel,
-        year: Number(fields.year),
-        weightLbs: Number(fields.weightLbs),
-        aluminumWeightLbs: Number(fields.alumWheelLbs),
-        wheelWeightLbs: Number(fields.wheelWeightLbs),
-        batteryWeightLbs: Number(fields.batteryLbs),
-        breakageWeightLbs: Number(fields.breakageLbs),
-        pickupPrice: Number(fields.pickupFee),
-        qoutedPrice: Number(fields.carPrice),
+        model: fields.makeModel?.trim(),
+        year: num(fields.year),
+        weightLbs: num(fields.weightLbs),
+        aluminumWeightLbs: num(fields.alumWheelLbs),
+        wheelWeightLbs: num(fields.wheelWeightLbs),
+        batteryWeightLbs: num(fields.batteryLbs),
+        breakageWeightLbs: num(fields.breakageLbs),
+        pickupPrice: num(fields.pickupFee),
+        qoutedPrice: num(fields.carPrice),
       };
 
       await sendVehicleQuote({ id: orderId, body }).unwrap();
@@ -580,7 +812,7 @@ function AvailableEmployees({ orderId, onAssigned }) {
     useGetAvailableEmployeesQuery({
       page,
       limit,
-     // workingStatus: "available",
+      // workingStatus: "available",
     });
 
   const [assignEmployee, { isLoading: isAssigning }] =
@@ -821,6 +1053,10 @@ function AvailableEmployees({ orderId, onAssigned }) {
 export default function ReviewQuotePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const from = searchParams.get("from");
+  console.log("frommmmmm: ", from);
 
   const { data: response, isLoading, isError } = useGetOrderByIdQuery(id);
   const d = response?.data;
@@ -835,15 +1071,15 @@ export default function ReviewQuotePage() {
 
   // Pickup + Pending + Vehicle → Pricing Calculator
   const showPricingCalculator =
-    deliveryType === "pickup" &&
-    status === "pending" &&
-    orderType === "Vehicle";
+    // deliveryType === "pickup" &&
+    status === "pending" && orderType === "Vehicle";
+
+  const ShowAcceptOfferView = status === "pending" && orderType === "Metals";
 
   // Pickup + Accepted + Vehicle → Assign Employee
   const showAssignEmployee =
-    deliveryType === "pickup" &&
-    status === "accepted" &&
-    orderType === "Vehicle";
+    // deliveryType === "pickup" &&
+    status === "accepted" && orderType === "Vehicle";
 
   // if (isLoading) {
   //   return (
@@ -981,14 +1217,20 @@ export default function ReviewQuotePage() {
             showAssignEmployee ? "md:w-[600px]" : "md:w-100"
           } shrink-0`}
         >
-          {showPricingCalculator ? (
+          {from === "request" && showPricingCalculator ? (
             <PricingCalculator
               d={d}
               orderId={id}
               onOfferSent={() => navigate(-1)}
             />
-          ) : showAssignEmployee ? (
+          ) : from === "request" && showAssignEmployee ? (
             <AvailableEmployees orderId={id} onAssigned={() => navigate(-1)} />
+          ) : from === "request" && ShowAcceptOfferView ? (
+            <OfferAcceptSendOffer
+              d={d}
+              orderId={id}
+              onOfferSent={() => navigate(-1)}
+            />
           ) : (
             <OfferSummary d={d} />
           )}

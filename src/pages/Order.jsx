@@ -451,7 +451,9 @@ export default function Order() {
                     {fmtDate(order.createdAt)}
                   </div>
                   <button
-                    onClick={() => navigate(`/order-details/${order.orderId}`)}
+                    onClick={() =>
+                      navigate(`/order-details/${order.orderId}?from=order`)
+                    }
                     className="h-10 px-5 rounded-xl bg-[#F3EDF9] text-[#111827] text-sm font-medium hover:bg-[#ebe1f8] transition-all"
                   >
                     View Details
