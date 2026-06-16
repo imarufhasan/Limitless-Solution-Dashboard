@@ -3,6 +3,7 @@ import { useState } from "react";
 import AddEditMetalModal from "../../components/AddEditMetalModal";
 import { useGetAllMetalsQuery } from "../../redux/api/metalApi";
 
+
 // ---- Skeleton Card ----
 const MetalCardSkeleton = () => (
   <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4 animate-pulse">
@@ -54,9 +55,9 @@ const MetalCard = ({ item, onEdit }) => {
           <button onClick={() => onEdit(item)}>
             <Edit2 size={16} className="text-blue-500 hover:text-blue-700" />
           </button>
-          <button>
+          {/* <button onClick={() => onDelete(item._id)}>
             <Trash2 size={16} className="text-red-500 hover:text-red-700" />
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -98,23 +99,31 @@ const MetalPrice = () => {
     limit: 20,
     searchTerm,
   });
+  //const [deleteMetal] = useDeleteMetalMutation();
 
   const metals = data?.data || [];
 
-  // Debounce search
   const handleSearch = (e) => {
     const val = e.target.value;
     setInputValue(val);
     clearTimeout(window._metalSearchTimer);
-    window._metalSearchTimer = setTimeout(() => {
-      setSearchTerm(val);
-    }, 500);
+    window._metalSearchTimer = setTimeout(() => setSearchTerm(val), 500);
   };
 
   const handleEdit = (metal) => {
     setEditingMetal(metal);
     setOpen(true);
   };
+
+  // const handleDelete = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this metal?")) return;
+  //   try {
+  //     await deleteMetal(id).unwrap();
+  //     toast.success("Metal deleted successfully");
+  //   } catch (err) {
+  //     toast.error(err?.data?.message || "Failed to delete metal");
+  //   }
+  // };
 
   const handleClose = () => {
     setOpen(false);
@@ -123,7 +132,6 @@ const MetalPrice = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-6">
-      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-[22px] font-semibold text-[#111827]">
@@ -141,7 +149,6 @@ const MetalPrice = () => {
         </button>
       </div>
 
-      {/* Search */}
       <div className="bg-white border border-[#E5E7EB] rounded-2xl p-3 mb-6">
         <div className="relative">
           <Search
@@ -158,7 +165,6 @@ const MetalPrice = () => {
         </div>
       </div>
 
-      {/* Card Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {isLoading ? (
           Array.from({ length: 6 }).map((_, i) => <MetalCardSkeleton key={i} />)
@@ -168,7 +174,12 @@ const MetalPrice = () => {
           </div>
         ) : (
           metals.map((item) => (
-            <MetalCard key={item._id} item={item} onEdit={handleEdit} />
+            <MetalCard
+              key={item._id}
+              item={item}
+              onEdit={handleEdit}
+              //onDelete={handleDelete}
+            />
           ))
         )}
       </div>

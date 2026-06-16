@@ -28,7 +28,6 @@ const statusMap = {
   cancelled: "cancelled",
 };
 
-// ─── Skeleton Card ─────────────────────────────────────────────────────────────
 function SkeletonCard() {
   return (
     <div className="bg-white border border-[#E5E7EB] rounded-2xl p-5 animate-pulse">
@@ -57,7 +56,6 @@ function SkeletonCard() {
   );
 }
 
-// ─── Empty State ───────────────────────────────────────────────────────────────
 function EmptyState({ search, activeTab }) {
   return (
     <div className="bg-white border border-[#E5E7EB] rounded-2xl p-12 text-center">
@@ -97,21 +95,19 @@ export default function RequestOrder() {
   const [activeTab, setActiveTab] = useState("all");
   const [page, setPage] = useState(1);
   const limit = 10;
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
 
-  // Debounce search — wait 400ms after user stops typing
   useEffect(() => {
     const t = setTimeout(() => {
       setDebouncedSearch(search.trim());
-      setPage(1); // reset to page 1 on new search
+      setPage(1);
     }, 400);
     return () => clearTimeout(t);
   }, [search]);
 
-  // Reset page when tab changes
-  useEffect(() => {
-    setPage(1);
-  }, [activeTab]);
+  // useEffect(() => {
+  //   setPage(1);
+  // }, [activeTab]);
 
   const { data, isLoading, isFetching } = useGetAllOrdersQuery({
     page,
@@ -122,11 +118,10 @@ export default function RequestOrder() {
 
   const orders = data?.data ?? [];
   const total = data?.meta?.total ?? data?.pagination?.total ?? 0;
-  const totalPages = Math.ceil(total / limit);
-
+  //  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.max(1, Math.ceil(total / limit));
   const showSkeleton = isLoading || isFetching;
 
-  // Tick for "X min ago"
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(interval);
@@ -152,21 +147,10 @@ export default function RequestOrder() {
       ? `$${(order.totalPrice || 0).toLocaleString()}`
       : `$${(order.subTotal || 0).toLocaleString()}`;
 
-  // const getActionButton2 = (status) => {
-  //   switch (status) {
-  //     case "pending":
-  //       return "Review & Send Offer";
-  //     case "accepted":
-  //       return "Assign Employee";
-  //     default:
-  //       return "View Details";
-  //   }
-  // };
   const getActionButton = (order) => {
     if (order.status === "pending") {
       return "Review & Send Offer";
     }
-
     if (
       order.status === "accepted" &&
       order.orderType === "Vehicle" &&
@@ -174,20 +158,8 @@ export default function RequestOrder() {
     ) {
       return "Assign Employee";
     }
-
     return "View Details";
   };
-
-  // const getActionStyle = (status) => {
-  //   switch (status) {
-  //     case "pending":
-  //       return "bg-[#652D8B] text-white";
-  //     case "accepted":
-  //       return "bg-[#10B981] text-white";
-  //     default:
-  //       return "bg-[#F3EDF9] text-[#111827]";
-  //   }
-  // };
 
   const getActionStyle = (order) => {
     if (order.status === "pending") {
@@ -221,7 +193,6 @@ export default function RequestOrder() {
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-6">
-      {/* Header */}
       <div className="mb-5">
         <h1 className="text-[22px] font-semibold text-[#111827]">
           Quote Requests
@@ -231,7 +202,6 @@ export default function RequestOrder() {
         </p>
       </div>
 
-      {/* Search & Tabs */}
       <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4 mb-5">
         <div className="relative mb-4">
           <Search
@@ -251,7 +221,10 @@ export default function RequestOrder() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setPage(1);
+              }}
               className={`h-10 px-5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === tab.id
                   ? "bg-[#652D8B] text-white"
@@ -265,10 +238,8 @@ export default function RequestOrder() {
         </div>
       </div>
 
-      {/* Orders / Skeleton / Empty */}
       <div className="space-y-4">
         {showSkeleton ? (
-          // Show 4 skeleton cards while loading or fetching
           Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
         ) : orders.length === 0 ? (
           <EmptyState search={debouncedSearch} activeTab={activeTab} />
@@ -345,7 +316,6 @@ export default function RequestOrder() {
         )}
       </div>
 
-      {/* Pagination */}
       {!showSkeleton && totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-6">
           <button

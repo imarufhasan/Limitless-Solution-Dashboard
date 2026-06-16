@@ -40,7 +40,7 @@ import {
   useSendVehicleQuoteMutation,
 } from "../redux/api/orderApi";
 import {
-  useGetAvailableEmployeesQuery,
+  useGetAllEmployeesQuery,
   useAssignEmployeeMutation,
 } from "../redux/api/employeeApi";
 
@@ -808,12 +808,13 @@ function AvailableEmployees({ orderId, onAssigned }) {
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data: empResponse, isLoading: empLoading } =
-    useGetAvailableEmployeesQuery({
-      page,
-      limit,
-      // workingStatus: "available",
-    });
+  const { data: empResponse, isLoading: empLoading } = useGetAllEmployeesQuery({
+    page,
+    limit,
+    searchTerm: search,
+    //workingStatus: "available",
+
+  });
 
   const [assignEmployee, { isLoading: isAssigning }] =
     useAssignEmployeeMutation();
@@ -1151,7 +1152,7 @@ export default function ReviewQuotePage() {
       </button>
 
       <div className="mb-5">
-        <Title level={4} className="!mb-1 !text-gray-900">
+        <Title level={4} className="mb-1! text-gray-900!">
           {showAssignEmployee ? "Assign Employee" : "Review quote request"}
         </Title>
         <div className="flex items-center gap-2">
@@ -1213,9 +1214,7 @@ export default function ReviewQuotePage() {
 
         {/* Right column */}
         <div
-          className={`${
-            showAssignEmployee ? "md:w-[600px]" : "md:w-100"
-          } shrink-0`}
+          className={`${showAssignEmployee ? "md:w-150" : "md:w-100"} shrink-0`}
         >
           {from === "request" && showPricingCalculator ? (
             <PricingCalculator

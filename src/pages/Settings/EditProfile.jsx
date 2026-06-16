@@ -3,13 +3,13 @@ import { Camera, Eye, EyeOff, User, Mail, Phone, MapPin } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { FileUploader } from "../components/FileUploader";
-import { ProfileSkeleton } from "../components/shimmer/ProfileSkeleton";
+import { FileUploader } from "../../components/FileUploader";
+import { ProfileSkeleton } from "../../components/shimmer/ProfileSkeleton";
 import {
   useChangePasswordMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
-} from "../redux/api/profileApi";
+} from "../../redux/api/profileApi";
 
 export default function ProfileManagement() {
   const [activeTab, setActiveTab] = useState("edit-profile");

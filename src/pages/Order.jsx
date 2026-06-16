@@ -13,7 +13,6 @@ import {
   useGetOrderAnalyticsQuery,
 } from "../redux/api/orderApi";
 
-// ── Shimmer keyframe (injected once) ─────────────────────────────────────────
 if (
   typeof document !== "undefined" &&
   !document.getElementById("order-shimmer-style")
@@ -29,7 +28,6 @@ if (
   document.head.appendChild(s);
 }
 
-// ── Skeleton primitives ───────────────────────────────────────────────────────
 function Sk({ className = "", style = {} }) {
   return (
     <div
@@ -87,16 +85,15 @@ function OrderCardSkeleton() {
   );
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
 const TABS = [
   { label: "All Orders", value: "" },
   { label: "Pending", value: "pending" },
   { label: "Assigned", value: "assigned" },
   { label: "In Progress", value: "in-progress" },
   { label: "Completed", value: "completed" },
+  { label: "Cancelled", value: "cancelled" },
 ];
 
-// ── Status badge ──────────────────────────────────────────────────────────────
 function statusStyle(status = "") {
   const s = status.toLowerCase();
   if (s === "assigned") return "bg-[#DBEAFE] text-[#2563EB]";
@@ -116,7 +113,6 @@ function statusLabel(status = "") {
   );
 }
 
-// ── Delivery type badge ───────────────────────────────────────────────────────
 function DeliveryBadge({ type }) {
   const isPickup = type === "pickup";
   return (
@@ -131,7 +127,6 @@ function DeliveryBadge({ type }) {
   );
 }
 
-// ── Items summary ─────────────────────────────────────────────────────────────
 function itemsSummary(items = []) {
   if (!items.length) return "—";
   if (items.length === 1) {
@@ -141,7 +136,6 @@ function itemsSummary(items = []) {
   return items.map((i) => `${i.name} (${i.quantity} ${i.unit})`).join(", ");
 }
 
-// ── Format date ───────────────────────────────────────────────────────────────
 function fmtDate(dateStr) {
   if (!dateStr) return "—";
   try {
@@ -155,7 +149,6 @@ function fmtDate(dateStr) {
   }
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
 function EmptyState({ message = "No orders found" }) {
   return (
     <div className="bg-white border border-[#E5E7EB] rounded-2xl p-12 flex flex-col items-center justify-center text-center">
@@ -170,7 +163,6 @@ function EmptyState({ message = "No orders found" }) {
   );
 }
 
-// ── Pagination ────────────────────────────────────────────────────────────────
 function Pagination({ current, total, pageSize, onChange }) {
   const totalPages = Math.ceil(total / pageSize);
   if (totalPages <= 1) return null;
@@ -203,7 +195,6 @@ function Pagination({ current, total, pageSize, onChange }) {
   );
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function Order() {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
@@ -229,8 +220,6 @@ export default function Order() {
   const meta = res?.meta || {};
   const totalCount = meta.total || 0;
 
-  // Analytics — API returns flat object under res.data:
-  // { totalOrder, pending, assigned, completed, cancelled, ... }
   const analytics = analyticsRes?.data || {};
 
   const handleSearch = (e) => {
@@ -252,7 +241,6 @@ export default function Order() {
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-4 md:p-6">
-      {/* Header */}
       <div className="mb-5">
         <h1 className="text-[24px] font-semibold text-[#111827]">Orders</h1>
         <p className="text-sm text-[#6B7280] mt-1">
@@ -260,7 +248,6 @@ export default function Order() {
         </p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
         {statsLoading ? (
           <>
@@ -292,7 +279,6 @@ export default function Order() {
         )}
       </div>
 
-      {/* Search & Tabs */}
       <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4 mb-5">
         <div className="relative mb-4">
           <Search
@@ -324,7 +310,6 @@ export default function Order() {
         </div>
       </div>
 
-      {/* Orders List */}
       {isLoading ? (
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -344,9 +329,7 @@ export default function Order() {
                 className="bg-white border border-[#E5E7EB] rounded-2xl p-5"
               >
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
-                  {/* Left */}
                   <div className="flex-1">
-                    {/* Tags row */}
                     <div className="flex items-center gap-3 flex-wrap mb-5">
                       <span className="bg-[#F3EDF9] text-[#652D8B] text-xs font-semibold px-3 py-1 rounded-md font-mono tracking-wide">
                         {order.orderNumber}
@@ -362,9 +345,7 @@ export default function Order() {
                       <DeliveryBadge type={order.deliveryType} />
                     </div>
 
-                    {/* Details grid */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                      {/* Customer */}
                       <div>
                         <p className="text-xs text-[#9CA3AF] mb-2">Customer</p>
                         <div className="flex items-center gap-2">
@@ -381,7 +362,6 @@ export default function Order() {
                         </p>
                       </div>
 
-                      {/* Pickup / Address */}
                       <div>
                         <p className="text-xs text-[#9CA3AF] mb-2">
                           {order.deliveryType === "pickup"
@@ -401,7 +381,6 @@ export default function Order() {
                         </div>
                       </div>
 
-                      {/* Items / VIN */}
                       <div>
                         <p className="text-xs text-[#9CA3AF] mb-2">
                           {order.orderType === "Vehicle"
@@ -419,7 +398,7 @@ export default function Order() {
                         )}
                         {order.additionalNotes && (
                           <p
-                            className="text-xs text-[#9CA3AF] mt-1 italic truncate max-w-[180px]"
+                            className="text-xs text-[#9CA3AF] mt-1 italic truncate max-w-45"
                             title={order.additionalNotes}
                           >
                             "{order.additionalNotes}"
@@ -429,7 +408,6 @@ export default function Order() {
                     </div>
                   </div>
 
-                  {/* Right — Amount */}
                   <div className="text-right shrink-0">
                     <p className="text-xs text-[#9CA3AF]">Sub Total</p>
                     <h2 className="text-[34px] font-bold text-[#652D8B] mt-1 leading-none">
@@ -444,7 +422,6 @@ export default function Order() {
                   </div>
                 </div>
 
-                {/* Bottom */}
                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#F3F4F6]">
                   <div className="flex items-center gap-2 text-sm text-[#6B7280]">
                     <CalendarDays size={15} />

@@ -56,22 +56,22 @@ const DashboardPage = () => {
           <StatCard
             title="Total Users"
             value={dashboardData?.summary?.totalUsers || 0}
-            Icon={Users}
+            icon={Users}
           />
           <StatCard
             title="Total Customers"
             value={dashboardData?.summary?.customer || 0}
-            Icon={UserCheck}
+            icon={UserCheck}
           />
           <StatCard
             title="Total Employees"
             value={dashboardData?.summary?.staff || 0}
-            Icon={User}
+            icon={User}
           />
           <StatCard
             title="Total Metals"
             value={dashboardData?.summary?.totalMetals || 0}
-            Icon={TrendingUp}
+            icon={TrendingUp}
           />
         </>
       </div>
@@ -278,21 +278,25 @@ const IndependentChartCard = ({ title, type, chartType }) => {
   );
 };
 
-const StatCard = ({ title, value, Icon }) => (
-  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex gap-5 items-start transition-all hover:shadow-md hover:-translate-y-1 group">
-    <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100 group-hover:text-white transition-all duration-300">
-      <Icon size={22} className="text-[#652D8B]" />
+const StatCard = ({ title, value, icon }) => {
+  const Icon = icon;
+
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex gap-5 items-start transition-all hover:shadow-md hover:-translate-y-1 group">
+      <div className="p-3 bg-[#F0EAF3] rounded-xl border border-slate-100 group-hover:text-white transition-all duration-300">
+        <Icon size={22} className="text-[#652D8B]" />
+      </div>
+      <div>
+        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1 leading-tight">
+          {title}
+        </p>
+        <h3 className="text-3xl font-black text-slate-800 tracking-tight">
+          {value}
+        </h3>
+      </div>
     </div>
-    <div>
-      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1 leading-tight">
-        {title}
-      </p>
-      <h3 className="text-3xl font-black text-slate-800 tracking-tight">
-        {value}
-      </h3>
-    </div>
-  </div>
-);
+  );
+};
 
 const SkeletonStatCard = () => (
   <div className="bg-white p-6 rounded-2xl border border-slate-200 animate-pulse">

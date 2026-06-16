@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
 import Text from "../components/Text";
 import Inputbox from "../components/InputBox";
 import Button from "../components/Button";
@@ -12,7 +11,7 @@ const SetNewPasswordPage = () => {
 
   // Get data passed from VerifyCodePage
   const email = location.state?.email || "";
-  const verificationCode = location.state?.verificationCode || "";
+  // const verificationCode = location.state?.verificationCode || "";
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

@@ -24,7 +24,6 @@ export const employeeApi = baseApi.injectEndpoints({
       providesTags: ["Employee"],
     }),
 
-    // {{baseUrl}}/employee
     createEmployee: builder.mutation({
       query: (body) => ({
         url: "/employee",
@@ -33,13 +32,6 @@ export const employeeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Employee"],
     }),
-    getAvailableEmployees: builder.query({
-      query: ({ page = 1, limit = 10, workingStatus = "available" } = {}) => ({
-        url: "/employee/all",
-        params: { page, limit, workingStatus },
-      }),
-      providesTags: ["Employee"],
-    }),
 
     assignEmployee: builder.mutation({
       query: (body) => ({
@@ -47,7 +39,6 @@ export const employeeApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      // Invalidate the order so ReviewQuotePage re-fetches updated status
       invalidatesTags: ["Assignment"],
     }),
   }),
@@ -57,6 +48,5 @@ export const {
   useGetAllEmployeesQuery,
   useGetEmployeeAnalyticsQuery,
   useCreateEmployeeMutation,
-  useGetAvailableEmployeesQuery,
   useAssignEmployeeMutation,
 } = employeeApi;

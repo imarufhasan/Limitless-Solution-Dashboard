@@ -45,7 +45,24 @@ export const profileApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { status },
       }),
-      invalidatesTags: ["Users"], 
+      invalidatesTags: ["Users"],
+    }),
+    // {{baseUrl}}/content
+    getContent: builder.query({
+      query: (type) => `/content/${type}`, // ← was `/content?type=${type}`
+      providesTags: (result, error, type) => [{ type: "Content", id: type }],
+    }),
+
+    // ── POST (create OR update) ───────────────────────────
+    saveContent: builder.mutation({
+      query: (body) => ({
+        url: "/content",
+        method: "POST",
+        body, // { type, content }
+      }),
+      invalidatesTags: (result, error, { type }) => [
+        { type: "Content", id: type },
+      ],
     }),
   }),
 });
@@ -56,4 +73,6 @@ export const {
   useChangePasswordMutation,
   useGetAllUsersQuery,
   useUpdateUserStatusMutation,
+  useGetContentQuery,
+  useSaveContentMutation,
 } = profileApi;

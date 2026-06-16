@@ -10,10 +10,10 @@ import VerifyCodePage from "./pages/VerifyCodePage";
 import SetNewPasswordPage from "./pages/SetNewPasswordPage";
 import Layout from "./pages/Layout";
 import DashboardPage from "./pages/Dashboard";
-import AccountSettings from "./pages/AccountSettings";
-import EditProfile from "./pages/EditProfile";
-import PrivacySettings from "./pages/PrivacySettings";
-import TermsAndConditions from "./pages/TermsAndConditions";
+import AboutUs from "./pages/Settings/AboutUs";
+import EditProfile from "./pages/Settings/EditProfile";
+import PrivacySettings from "./pages/Settings/PrivacySettings";
+import TermsAndConditions from "./pages/Settings/TermsAndConditions";
 import UserManagement from "./pages/UserManagement";
 import MetalPrice from "./pages/MetalPrice/MetalPrice";
 import EmployeeManagement from "./pages/EmployeeManagement";
@@ -105,15 +105,15 @@ function App() {
         />
 
         <Route
-          path="/accountsettings"
+          path="/aboutUs"
           element={
             <Layout>
-              <AccountSettings />
+              <AboutUs />
             </Layout>
           }
         />
         <Route
-          path="/editprofile"
+          path="/editProfile"
           element={
             <Layout>
               <EditProfile />
@@ -121,7 +121,7 @@ function App() {
           }
         />
         <Route
-          path="/privacysettings"
+          path="/privacySettings"
           element={
             <Layout>
               <PrivacySettings />
@@ -129,7 +129,7 @@ function App() {
           }
         />
         <Route
-          path="/termsandconditions"
+          path="/termsAndConditions"
           element={
             <Layout>
               <TermsAndConditions />

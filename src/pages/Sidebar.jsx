@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { FaSignOutAlt, FaChevronRight } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { LiaUserFriendsSolid } from "react-icons/lia";
@@ -11,12 +11,10 @@ import { FiShoppingBag } from "react-icons/fi";
 import logo from "../assets/images/logo.png";
 import { BookCheck, MessageSquare, MonitorCloud } from "lucide-react";
 
-const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
-  const navigate = useNavigate();
+const SidebarItem = ({ to, icon, label }) => {
+  const Icon = icon;
 
-  const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
-
-  const SidebarItem = ({ to, icon: Icon, label }) => (
+  return (
     <li>
       <NavLink
         to={to}
@@ -24,7 +22,7 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
           `w-full px-4 py-3 rounded-2xl flex items-center group transition-all duration-200 ${
             isActive
               ? "bg-[#652D8B] text-white"
-              : "text-[#0F0B18] hover:bg-neutral-800 hover:text-white"  // ✅ hover:text-white added
+              : "text-[#0F0B18] hover:bg-neutral-800 hover:text-white"
           }`
         }
       >
@@ -35,12 +33,40 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
                 isActive ? "text-white" : "group-hover:text-white"
               }`}
             />
-            {sidebarVisible && <span className="font-medium">{label}</span>}
+            <span className="font-medium">{label}</span>
           </>
         )}
       </NavLink>
     </li>
   );
+};
+
+const Sidebar = ({ sidebarVisible }) => {
+  // const SidebarItem = ({ to, icon: Icon, label }) => (
+  //   <li>
+  //     <NavLink
+  //       to={to}
+  //       className={({ isActive }) =>
+  //         `w-full px-4 py-3 rounded-2xl flex items-center group transition-all duration-200 ${
+  //           isActive
+  //             ? "bg-[#652D8B] text-white"
+  //             : "text-[#0F0B18] hover:bg-neutral-800 hover:text-white"  // ✅ hover:text-white added
+  //         }`
+  //       }
+  //     >
+  //       {({ isActive }) => (
+  //         <>
+  //           <Icon
+  //             className={`mr-3 size-5 ${
+  //               isActive ? "text-white" : "group-hover:text-white"
+  //             }`}
+  //           />
+  //           {sidebarVisible && <span className="font-medium">{label}</span>}
+  //         </>
+  //       )}
+  //     </NavLink>
+  //   </li>
+  // );
 
   return (
     <div
@@ -83,41 +109,33 @@ const Sidebar = ({ sidebarVisible, setSidebarVisible }) => {
             icon={LiaUserFriendsSolid}
             label="Employee "
           />
-          <SidebarItem
-            to="/order"
-            icon={BookCheck}
-            label="Orders"
-          />
-          <SidebarItem
-            to="/messages"
-            icon={MessageSquare}
-            label="Messages"
-          />
+          <SidebarItem to="/order" icon={BookCheck} label="Orders" />
+          <SidebarItem to="/messages" icon={MessageSquare} label="Messages" />
 
           <li className="relative group/parent">
-            <button className="w-full px-4 py-3 rounded-2xl flex items-center group transition-all text-[#0F0B18] hover:bg-neutral-800 hover:text-white">  
-              <IoSettingsOutline className="mr-3 size-5 group-hover:text-white" />  
+            <button className="w-full px-4 py-3 rounded-2xl flex items-center group transition-all text-[#0F0B18] hover:bg-neutral-800 hover:text-white">
+              <IoSettingsOutline className="mr-3 size-5 group-hover:text-white" />
               <span className="font-medium">Settings</span>
               <FaChevronRight className="ml-auto w-3 h-3 transition-transform duration-300 group-hover/parent:rotate-90" />
             </button>
             <ul className="pl-4 mt-2 space-y-2 hidden group-hover/parent:block border-l border-neutral-800 ml-4">
               <SidebarItem
-                to="/editprofile"
+                to="/editProfile"
                 icon={CgProfile}
                 label="Edit Profile"
               />
               <SidebarItem
-                to="/accountsettings"
+                to="/aboutUs"
                 icon={CiCircleInfo}
                 label="About Us"
               />
               <SidebarItem
-                to="/privacysettings"
+                to="/privacySettings"
                 icon={MdOutlinePrivacyTip}
                 label="Privacy Settings"
               />
               <SidebarItem
-                to="/termsandconditions"
+                to="/termsAndConditions"
                 icon={FaRegNewspaper}
                 label="Terms & Conditions"
               />
