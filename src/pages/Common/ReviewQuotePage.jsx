@@ -38,11 +38,11 @@ import {
   useGetOrderByIdQuery,
   useSendMetalQuoteMutation,
   useSendVehicleQuoteMutation,
-} from "../redux/api/orderApi";
+} from "../../redux/api/orderApi";
 import {
   useGetAllEmployeesQuery,
   useAssignEmployeeMutation,
-} from "../redux/api/employeeApi";
+} from "../../redux/api/employeeApi";
 
 const { Text, Title } = Typography;
 

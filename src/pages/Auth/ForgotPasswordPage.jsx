@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Text from "../components/Text";
-import Inputbox from "../components/InputBox";
-import Button from "../components/Button";
+import Text from "../../components/Text";
+import Inputbox from "../../components/InputBox";
+import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 
 const ForgotPasswordPage = () => {

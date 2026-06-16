@@ -34,7 +34,7 @@ const MetalCardSkeleton = () => (
 const MetalCard = ({ item, onEdit }) => {
   const isUp = item.priceTrendingDirection === "up";
   const trendText = item.priceTrending
-    ? `${isUp ? "+" : "-"} ${item.priceTrending?.toFixed(2)}%`
+    ? `${isUp ? "+" : ""} ${item.priceTrending?.toFixed(2)}%`
     : "No change";
 
   return (

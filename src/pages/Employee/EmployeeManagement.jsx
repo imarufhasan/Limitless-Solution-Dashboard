@@ -1,11 +1,11 @@
 import { Plus, Search } from "lucide-react";
 import React, { useState } from "react";
 import { Table } from "antd";
-import AddEmployeeModal from "../components/AddEmployeeModal";
+import AddEmployeeModal from "../../components/AddEmployeeModal";
 import {
   useGetAllEmployeesQuery,
   useGetEmployeeAnalyticsQuery,
-} from "../redux/api/employeeApi";
+} from "../../redux/api/employeeApi";
 
 // ---------- Shimmer keyframe (injected once) ----------
 if (

@@ -11,11 +11,18 @@ import {
 const CONTENT_TYPE = "privacy_policy";
 
 export default function PrivacyPolicyManagement() {
+  const [content, setContent] = useState("");
+  const [initialized, setInitialized] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
   const { data, isLoading, refetch } = useGetContentQuery(CONTENT_TYPE);
-  console.log("privacy data: ", data);
   const [saveContent, { isLoading: isSaving }] = useSaveContentMutation();
-  const [content, setContent] = useState(() => data?.data?.content || "");
+
+  const serverContent = data?.data?.content ?? "";
+  if (!initialized && serverContent) {
+    setContent(serverContent);
+    setInitialized(true);
+  }
 
   const handleSave = async () => {
     try {

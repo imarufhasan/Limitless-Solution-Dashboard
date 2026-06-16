@@ -19,9 +19,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import RecentUsersTable from "../components/RecentUserTable/RecentUserTable";
-import BannerUploader from "../components/Banneruploader";
-import { useGetDashboardAnalyticsQuery } from "../redux/api/dashboardApi";
+import RecentUsersTable from "../../components/RecentUserTable/RecentUserTable";
+import BannerUploader from "../../components/Banneruploader";
+import { useGetDashboardAnalyticsQuery } from "../../redux/api/dashboardApi";
 
 const DashboardPage = () => {
   const currentYear = new Date().getFullYear();

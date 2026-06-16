@@ -11,10 +11,18 @@ import {
 const CONTENT_TYPE = "about_us";
 
 export default function AboutUs() {
+  const [content, setContent] = useState("");
+  const [initialized, setInitialized] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
   const { data, isLoading, refetch } = useGetContentQuery(CONTENT_TYPE);
   const [saveContent, { isLoading: isSaving }] = useSaveContentMutation();
-  const [content, setContent] = useState(() => data?.data?.content || "");
+
+  const serverContent = data?.data?.content ?? "";
+  if (!initialized && serverContent) {
+    setContent(serverContent);
+    setInitialized(true);
+  }
 
   const handleSave = async () => {
     try {

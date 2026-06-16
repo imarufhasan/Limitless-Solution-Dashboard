@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useGetAllOrdersQuery,
   useGetOrderAnalyticsQuery,
-} from "../redux/api/orderApi";
+} from "../../redux/api/orderApi";
 
 if (
   typeof document !== "undefined" &&

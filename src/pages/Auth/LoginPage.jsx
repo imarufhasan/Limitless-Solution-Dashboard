@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Text from "../components/Text";
-import Inputbox from "../components/InputBox";
-import Button from "../components/Button";
-import { useLoginMutation } from "../redux/api/authApi";
+import Text from "../../components/Text";
+import Inputbox from "../../components/InputBox";
+import Button from "../../components/Button";
+import { useLoginMutation } from "../../redux/api/authApi";
 import { toast } from "react-toastify";
 
 const LoginPage = () => {
