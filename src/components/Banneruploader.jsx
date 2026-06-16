@@ -157,7 +157,7 @@ const BannerUploader = () => {
 
           {/* ── Right: Uploaded banners from API ── */}
           <div className="w-64 mt-8">
-            <div className="h-[420px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-[#C5B8D8]">
+            <div className="h-105 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-[#C5B8D8]">
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div

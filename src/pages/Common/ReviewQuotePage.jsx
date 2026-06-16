@@ -582,8 +582,6 @@ function OfferAcceptSendOffer({ d, orderId, onOfferSent }) {
   );
 }
 
-// ─── Dates card ───────────────────────────────────────────────────────────────
-
 function DatesCard({ d }) {
   return (
     <Card
@@ -604,8 +602,6 @@ function DatesCard({ d }) {
     </Card>
   );
 }
-
-// ─── Pricing Calculator ───────────────────────────────────────────────────────
 
 function PricingCalculator({ d, orderId, onOfferSent }) {
   const [api, contextHolder] = notification.useNotification();
@@ -813,7 +809,6 @@ function AvailableEmployees({ orderId, onAssigned }) {
     limit,
     searchTerm: search,
     //workingStatus: "available",
-
   });
 
   const [assignEmployee, { isLoading: isAssigning }] =
@@ -1049,7 +1044,76 @@ function AvailableEmployees({ orderId, onAssigned }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Assigned Employee Card ───────────────────────────────────────────────────
+
+function AssignedEmployeeCard({ d }) {
+  if (!d.employeeId) return null;
+
+  return (
+    <div className="mb-4">
+      <Card
+        className="rounded-xl"
+        styles={{ body: { padding: "16px 20px" } }}
+        style={{ border: "1px solid #e5e7eb" }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <UserOutlined style={{ color: "#7c3aed", fontSize: 15 }} />
+          <span className="font-semibold text-gray-800 text-sm">
+            Assigned Employee
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Avatar
+            size={44}
+            src={d.employeeProfileImage || undefined}
+            style={{
+              background: "#e9d5ff",
+              color: "#7c3aed",
+              fontWeight: 600,
+              flexShrink: 0,
+            }}
+          >
+            {!d.employeeProfileImage && d.employeeName?.charAt(0).toUpperCase()}
+          </Avatar>
+
+          <div className="flex-1 min-w-0">
+            <Text className="text-sm font-semibold text-gray-800 block">
+              {d.employeeName}
+            </Text>
+            <div className="flex items-center gap-1 mt-0.5">
+              <MailOutlined style={{ fontSize: 11, color: "#9ca3af" }} />
+              <Text className="text-xs text-gray-400 truncate">
+                {d.employeeEmail}
+              </Text>
+            </div>
+            <div className="flex items-center gap-1 mt-0.5">
+              <PhoneOutlined style={{ fontSize: 11, color: "#9ca3af" }} />
+              <Text className="text-xs text-gray-400">
+                {d.employeePhoneNumber}
+              </Text>
+            </div>
+          </div>
+
+          <Tag
+            style={{
+              fontSize: 10,
+              padding: "2px 8px",
+              borderRadius: 20,
+              border: "none",
+              background: "#f0fdf4",
+              color: "#16a34a",
+              fontWeight: 600,
+              flexShrink: 0,
+            }}
+          >
+            Assigned
+          </Tag>
+        </div>
+      </Card>
+    </div>
+  );
+}
 
 export default function ReviewQuotePage() {
   const { id } = useParams();
@@ -1070,25 +1134,12 @@ export default function ReviewQuotePage() {
   console.log("status: ", status);
   console.log("orderType: ", orderType);
 
-  // Pickup + Pending + Vehicle → Pricing Calculator
-  const showPricingCalculator =
-    // deliveryType === "pickup" &&
-    status === "pending" && orderType === "Vehicle";
+  const showPricingCalculator = status === "pending" && orderType === "Vehicle";
 
   const ShowAcceptOfferView = status === "pending" && orderType === "Metals";
 
-  // Pickup + Accepted + Vehicle → Assign Employee
-  const showAssignEmployee =
-    // deliveryType === "pickup" &&
-    status === "accepted" && orderType === "Vehicle";
+  const showAssignEmployee = status === "accepted" && orderType === "Vehicle";
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-64">
-  //       <Spin size="large" />
-  //     </div>
-  //   );
-  // }
   if (isLoading) {
     return (
       <div className="bg-gray-50 px-4 py-6 md:px-8 rounded-lg">
@@ -1233,6 +1284,9 @@ export default function ReviewQuotePage() {
           ) : (
             <OfferSummary d={d} />
           )}
+
+          <AssignedEmployeeCard d={d} />
+
           <DatesCard d={d} />
         </div>
       </div>
