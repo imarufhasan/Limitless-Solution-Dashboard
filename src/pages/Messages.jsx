@@ -8,6 +8,7 @@ import {
 import {
   useConversationQuery,
   useSupportConversationsQuery,
+  useUploadAttachmentMutation,
 } from "../redux/api/messageApi";
 import { useSocket } from "../hooks/useSocket";
 
@@ -53,6 +54,11 @@ export default function Messages() {
   const currentRoomRef = useRef(null);
 
   // ── REST ─────────────────────────────────────────────────
+
+  const [uploadAttachment, { isLoading: isUploading }] =
+    useUploadAttachmentMutation();
+  const fileInputRef = useRef(null);
+
   const { data: convoData, isLoading: convoLoading } =
     useSupportConversationsQuery();
   const conversations = convoData?.data || [];
@@ -161,10 +167,12 @@ export default function Messages() {
     };
 
     socket.on("new_message", onNewMessage);
-    socket.on("typing", onTyping);
+    socket.on("display_typing", onTyping);
+    socket.emit("typing", onTyping);
 
     return () => {
       socket.off("new_message", onNewMessage);
+      socket.off("display_typing", onTyping);
       socket.off("typing", onTyping);
     };
   }, [selectedConversationId, adminId]);
@@ -202,6 +210,37 @@ export default function Messages() {
     setSocketMessages([]);
     setIsOtherTyping(false);
   };
+
+  const handleAttachment = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !selectedConversationId) return;
+    e.target.value = "";
+
+    try {
+      const formData = new FormData();
+      formData.append("attachment", file);
+      const res = await uploadAttachment(formData).unwrap();
+      const url = res?.data;
+      if (!url) return;
+
+      // Send the URL as a message via socket
+      const socket = getSocket();
+      if (!socket?.connected) return;
+      socket.emit("send_message", {
+        conversationId: selectedConversationId,
+        message: url, // URL as message text
+        attachments: [url], // also mark as attachment
+      });
+    } catch (err) {
+      console.error("Attachment upload failed:", err);
+    }
+  };
+
+  // Put this outside the component, near timeAgo
+  const isImageUrl = (text) =>
+    typeof text === "string" &&
+    text.startsWith("http") &&
+    /\.(png|jpg|jpeg|gif|webp)(\?|$)/i.test(text);
 
   return (
     <div className="p-6">
@@ -386,9 +425,24 @@ export default function Messages() {
                               borderBottomLeftRadius: !fromMe ? 4 : undefined,
                             }}
                           >
-                            <p className="text-sm leading-relaxed">
-                              {msg.text}
-                            </p>
+                            {isImageUrl(msg.text) ? (
+                              <a
+                                href={msg.text}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <img
+                                  src={msg.text}
+                                  alt="attachment"
+                                  className="rounded-xl max-w-55 max-h-45 object-cover cursor-pointer"
+                                  style={{ display: "block" }}
+                                />
+                              </a>
+                            ) : (
+                              <p className="text-sm leading-relaxed">
+                                {msg.text}
+                              </p>
+                            )}
                           </div>
                         </div>
                         <span className="text-[11px] text-gray-400 mt-1 px-1">
@@ -444,13 +498,40 @@ export default function Messages() {
               {/* Input */}
               <div className="px-4 py-3 border-t border-gray-100">
                 <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2">
-                  <PaperClipOutlined
+                  {/* <PaperClipOutlined
                     style={{
                       color: "#9ca3af",
                       fontSize: 15,
                       cursor: "pointer",
                     }}
+                  /> */}
+
+                  {/* hidden file input */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,application/pdf"
+                    className="hidden"
+                    onChange={handleAttachment}
                   />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="disabled:opacity-40"
+                  >
+                    {isUploading ? (
+                      <Spin size="small" />
+                    ) : (
+                      <PaperClipOutlined
+                        style={{
+                          color: "#9ca3af",
+                          fontSize: 15,
+                          cursor: "pointer",
+                        }}
+                      />
+                    )}
+                  </button>
+
                   <input
                     value={inputText}
                     onChange={handleInputChange}

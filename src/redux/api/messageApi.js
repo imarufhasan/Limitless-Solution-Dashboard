@@ -17,10 +17,19 @@ export const messageApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Messages"],
     }),
+
+    uploadAttachment: builder.mutation({
+      query: (formData) => ({
+        url: "/conversation/attachment",
+        method: "POST",
+        body: formData,
+      }),
+    }),
   }),
 });
 
 export const {
   useConversationQuery,
   useSupportConversationsQuery,
+  useUploadAttachmentMutation,
 } = messageApi;
