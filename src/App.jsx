@@ -28,13 +28,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Routes without Sidebar */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgetPassword" element={<ForgotPasswordPage />} />
         <Route path="/verifyCode" element={<VerifyCodePage />} />
         <Route path="/setNewPassword" element={<SetNewPasswordPage />} />
 
-        {/* Routes with Sidebar (using Layout) */}
         <Route
           path="/dashboard"
           element={
@@ -49,91 +47,113 @@ function App() {
         <Route
           path="/user-management"
           element={
-            <Layout>
-              <UserManagement />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <UserManagement />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/add-metal-price"
           element={
-            <Layout>
-              <MetalPrice />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <MetalPrice />
+              </Layout>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/requested-orders"
           element={
-            <Layout>
-              <RequestOrder />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <RequestOrder />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/employee-management"
           element={
-            <Layout>
-              <EmployeeManagement />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <EmployeeManagement />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/order"
           element={
-            <Layout>
-              <Order />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Order />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/messages"
           element={
-            <Layout>
-              <Messages />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Messages />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/order-details/:id"
           element={
-            <Layout>
-              <ReviewQuotePage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <ReviewQuotePage />
+              </Layout>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/aboutUs"
           element={
-            <Layout>
-              <AboutUs />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <AboutUs />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/editProfile"
           element={
-            <Layout>
-              <EditProfile />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <EditProfile />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/privacySettings"
           element={
-            <Layout>
-              <PrivacySettings />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <PrivacySettings />
+              </Layout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/termsAndConditions"
           element={
-            <Layout>
-              <TermsAndConditions />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <TermsAndConditions />
+              </Layout>
+            </ProtectedRoute>
           }
         />
       </Routes>
