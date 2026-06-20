@@ -17,7 +17,7 @@ import TermsAndConditions from "./pages/Settings/TermsAndConditions";
 import UserManagement from "./pages/UserManagement";
 import MetalPrice from "./pages/Metal/MetalPrice";
 import EmployeeManagement from "./pages/Employee/EmployeeManagement";
-import RequestOrder from "./pages/Order/RequestOrder";
+import RequestOrder from "./pages/Request/RequestOrder";
 import Order from "./pages/Order/Order";
 import Messages from "./pages/Messages";
 import ReviewQuotePage from "./pages/Common/ReviewQuotePage";

@@ -22,25 +22,23 @@ function timeAgo(dateStr) {
   });
 }
 
-// Emit join only when socket is confirmed connected
 function joinRoom(getSocket, conversationId) {
   const socket = getSocket();
   if (!socket) return;
 
   if (socket.connected) {
     socket.emit("join_support", { conversationId });
-    console.log("[Socket] 🚪 joined:", conversationId);
+    console.log("[Socket] joined:", conversationId);
   } else {
-    // Wait for connection then join
     socket.once("connect", () => {
       socket.emit("join_support", { conversationId });
-      console.log("[Socket] 🚪 joined after connect:", conversationId);
+      console.log("[Socket] joined after connect:", conversationId);
     });
   }
 }
 
 export default function Messages() {
-  const getSocket = useSocket(); // getter function — always fresh
+  const getSocket = useSocket();
 
   const [search, setSearch] = useState("");
   const [selectedConversationId, setSelectedConversationId] = useState(null);
@@ -53,14 +51,15 @@ export default function Messages() {
   const typingTimerRef = useRef(null);
   const currentRoomRef = useRef(null);
 
-  // ── REST ─────────────────────────────────────────────────
-
   const [uploadAttachment, { isLoading: isUploading }] =
     useUploadAttachmentMutation();
   const fileInputRef = useRef(null);
 
-  const { data: convoData, isLoading: convoLoading } =
-    useSupportConversationsQuery();
+  const {
+    data: convoData,
+    isLoading: convoLoading,
+    refetch: supportRefetch,
+  } = useSupportConversationsQuery();
   const conversations = convoData?.data || [];
 
   const filtered = conversations.filter((c) =>
@@ -71,14 +70,16 @@ export default function Messages() {
     (c) => c.conversationId === selectedConversationId,
   );
 
-  const { data: msgData, isLoading: msgLoading } = useConversationQuery(
-    selectedConversationId,
-    { skip: !selectedConversationId },
-  );
+  const {
+    data: msgData,
+    isLoading: msgLoading,
+    refetch,
+  } = useConversationQuery(selectedConversationId, {
+    skip: !selectedConversationId,
+  });
 
   const adminId = selectedConvo?.ownId;
 
-  // Merge REST (oldest-first) + socket messages, dedupe by _id
   const restMessages = [...(msgData?.data?.messages || [])].reverse();
   const allMessages = [
     ...restMessages,
@@ -87,45 +88,49 @@ export default function Messages() {
     ),
   ];
 
-  // ── Auto-select first conversation ───────────────────────
-  if (!initialized && conversations.length > 0) {
-    setSelectedConversationId(conversations[0].conversationId);
-    setInitialized(true);
-  }
+  useEffect(() => {
+    if (selectedConversationId) {
+      refetch();
+      supportRefetch();
+    }
+  }, [selectedConversationId, refetch, supportRefetch]);
 
-  // ── Auto-scroll ───────────────────────────────────────────
+  useEffect(() => {
+    if (!initialized && conversations.length > 0) {
+      setSelectedConversationId(conversations[0].conversationId);
+      setInitialized(true);
+    }
+  }, [initialized, conversations]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [allMessages, isOtherTyping]);
 
-  // ── Join / leave room when conversation changes ───────────
   useEffect(() => {
     if (!selectedConversationId) return;
 
     const socket = getSocket();
     if (!socket) return;
 
-    // Leave previous room
     if (
       currentRoomRef.current &&
       currentRoomRef.current !== selectedConversationId
     ) {
-      socket.emit("leave", { conversationId: currentRoomRef.current });
-      console.log("[Socket] 🚶 left:", currentRoomRef.current);
+      socket.emit("leave_conversation", {
+        conversationId: currentRoomRef.current,
+      });
     }
 
-    // Join new room (waits for connection if needed)
     joinRoom(getSocket, selectedConversationId);
     currentRoomRef.current = selectedConversationId;
 
-    // Reset on room switch
-    setSocketMessages([]);
-    setIsOtherTyping(false);
-
     return () => {
       const s = getSocket();
+
       if (s && currentRoomRef.current) {
-        s.emit("leave", { conversationId: currentRoomRef.current });
+        s.emit("leave_conversation", {
+          conversationId: currentRoomRef.current,
+        });
       }
     };
   }, [selectedConversationId]);
@@ -168,12 +173,10 @@ export default function Messages() {
 
     socket.on("new_message", onNewMessage);
     socket.on("display_typing", onTyping);
-    socket.emit("typing", onTyping);
 
     return () => {
       socket.off("new_message", onNewMessage);
       socket.off("display_typing", onTyping);
-      socket.off("typing", onTyping);
     };
   }, [selectedConversationId, adminId]);
 
@@ -205,7 +208,7 @@ export default function Messages() {
   };
 
   const handleSelectConvo = (conversationId) => {
-    if (conversationId === selectedConversationId) return; // no-op if same
+    if (conversationId === selectedConversationId) return;
     setSelectedConversationId(conversationId);
     setSocketMessages([]);
     setIsOtherTyping(false);
@@ -223,37 +226,31 @@ export default function Messages() {
       const url = res?.data;
       if (!url) return;
 
-      // Send the URL as a message via socket
       const socket = getSocket();
       if (!socket?.connected) return;
       socket.emit("send_message", {
         conversationId: selectedConversationId,
-        message: url, // URL as message text
-        attachments: [url], // also mark as attachment
+        message: url,
+        attachments: [url],
       });
     } catch (err) {
       console.error("Attachment upload failed:", err);
     }
   };
 
-  // Put this outside the component, near timeAgo
   const isImageUrl = (text) =>
     typeof text === "string" &&
     text.startsWith("http") &&
     /\.(png|jpg|jpeg|gif|webp)(\?|$)/i.test(text);
 
   return (
-    <div className="p-6">
+    <div className="p-6 h-screen flex flex-col">
       <h2 className="text-base font-semibold text-gray-900 mb-0.5">Messages</h2>
       <p className="text-xs text-gray-400 mb-4">
         Communicate with Customers and Employees
       </p>
 
-      <div
-        className="flex rounded-xl border border-gray-200 bg-white overflow-hidden"
-        style={{ minHeight: 700 }}
-      >
-        {/* ── Left Sidebar ── */}
+      <div className="flex-1 flex rounded-xl border border-gray-200 bg-white overflow-hidden">
         <div className="w-64 border-r border-gray-100 flex flex-col shrink-0">
           <div className="p-3 border-b border-gray-100">
             <Input
@@ -347,7 +344,6 @@ export default function Messages() {
           </div>
         </div>
 
-        {/* ── Right Chat Area ── */}
         <div className="flex-1 flex flex-col min-w-0">
           {selectedConvo ? (
             <>
@@ -376,7 +372,6 @@ export default function Messages() {
                 </div>
               </div>
 
-              {/* Messages */}
               <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
                 {msgLoading ? (
                   <div className="flex justify-center py-10">
@@ -453,7 +448,6 @@ export default function Messages() {
                   })
                 )}
 
-                {/* Typing indicator */}
                 {isOtherTyping && (
                   <div className="flex items-end gap-2">
                     <Avatar
@@ -495,18 +489,8 @@ export default function Messages() {
                 <div ref={bottomRef} />
               </div>
 
-              {/* Input */}
               <div className="px-4 py-3 border-t border-gray-100">
                 <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2">
-                  {/* <PaperClipOutlined
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: 15,
-                      cursor: "pointer",
-                    }}
-                  /> */}
-
-                  {/* hidden file input */}
                   <input
                     ref={fileInputRef}
                     type="file"

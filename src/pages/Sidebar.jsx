@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaChevronRight } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { LiaUserFriendsSolid } from "react-icons/lia";
@@ -10,7 +10,8 @@ import { CgProfile } from "react-icons/cg";
 import { FiShoppingBag } from "react-icons/fi";
 import logo from "../assets/images/logo.png";
 import { BookCheck, MessageSquare, MonitorCloud } from "lucide-react";
-
+import { useLogOutMutation } from "../redux/api/authApi";
+import { Link } from "react-router-dom";
 const SidebarItem = ({ to, icon, label }) => {
   const Icon = icon;
 
@@ -42,31 +43,31 @@ const SidebarItem = ({ to, icon, label }) => {
 };
 
 const Sidebar = ({ sidebarVisible }) => {
-  // const SidebarItem = ({ to, icon: Icon, label }) => (
-  //   <li>
-  //     <NavLink
-  //       to={to}
-  //       className={({ isActive }) =>
-  //         `w-full px-4 py-3 rounded-2xl flex items-center group transition-all duration-200 ${
-  //           isActive
-  //             ? "bg-[#652D8B] text-white"
-  //             : "text-[#0F0B18] hover:bg-neutral-800 hover:text-white"  // ✅ hover:text-white added
-  //         }`
-  //       }
-  //     >
-  //       {({ isActive }) => (
-  //         <>
-  //           <Icon
-  //             className={`mr-3 size-5 ${
-  //               isActive ? "text-white" : "group-hover:text-white"
-  //             }`}
-  //           />
-  //           {sidebarVisible && <span className="font-medium">{label}</span>}
-  //         </>
-  //       )}
-  //     </NavLink>
-  //   </li>
-  // );
+  const [logOut] = useLogOutMutation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    if (location.pathname === "/dashboard") {
+      window.location.reload(); // only refresh if already there
+    } else {
+      navigate("/dashboard");
+    }
+  };
+  const handleLogout = async () => {
+    try {
+      const fcmToken = localStorage.getItem("fcmToken");
+      console.log("fcmToken: ", fcmToken);
+
+      await logOut({ fcmToken: fcmToken ?? "fcmToken" }).unwrap();
+    } catch (err) {
+      console.error("Logout API failed:", err);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("fcmToken");
+      window.location.href = "/login";
+    }
+  };
 
   return (
     <div
@@ -76,7 +77,10 @@ const Sidebar = ({ sidebarVisible }) => {
     >
       <div className="flex items-center justify-between mb-8 w-full relative">
         {sidebarVisible && (
-          <div className="w-full flex justify-center">
+          <div
+            onClick={handleLogoClick}
+            className="w-full flex justify-center cursor-pointer"
+          >
             <img src={logo} alt="Logo" className="h-14 w-auto" />
           </div>
         )}
@@ -124,11 +128,7 @@ const Sidebar = ({ sidebarVisible }) => {
                 icon={CgProfile}
                 label="Edit Profile"
               />
-              <SidebarItem
-                to="/aboutUs"
-                icon={CiCircleInfo}
-                label="About Us"
-              />
+              <SidebarItem to="/aboutUs" icon={CiCircleInfo} label="About Us" />
               <SidebarItem
                 to="/privacySettings"
                 icon={MdOutlinePrivacyTip}
@@ -146,13 +146,19 @@ const Sidebar = ({ sidebarVisible }) => {
 
       <div className="mt-auto pt-4 border-t border-neutral-800">
         {sidebarVisible ? (
-          <button className="w-full px-4 py-3 rounded-2xl text-neutral-400 hover:text-white hover:bg-neutral-800 flex items-center transition-all disabled:opacity-50">
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-3 rounded-2xl text-neutral-400 hover:text-white hover:bg-neutral-800 flex items-center transition-all disabled:opacity-50"
+          >
             <FaSignOutAlt className="mr-3 size-5" />
             <span className="font-medium">Log Out</span>
           </button>
         ) : (
           <div className="flex justify-center pb-4">
-            <FaSignOutAlt className="size-6 text-neutral-500 hover:text-red-400 cursor-pointer" />
+            <FaSignOutAlt
+              onClick={handleLogout}
+              className="size-6 text-neutral-500 hover:text-red-400 cursor-pointer"
+            />
           </div>
         )}
       </div>

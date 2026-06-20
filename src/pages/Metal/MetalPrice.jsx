@@ -3,7 +3,6 @@ import { useState } from "react";
 import AddEditMetalModal from "../../components/AddEditMetalModal";
 import { useGetAllMetalsQuery } from "../../redux/api/metalApi";
 
-
 // ---- Skeleton Card ----
 const MetalCardSkeleton = () => (
   <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4 animate-pulse">
@@ -115,29 +114,19 @@ const MetalPrice = () => {
     setOpen(true);
   };
 
-  // const handleDelete = async (id) => {
-  //   if (!window.confirm("Are you sure you want to delete this metal?")) return;
-  //   try {
-  //     await deleteMetal(id).unwrap();
-  //     toast.success("Metal deleted successfully");
-  //   } catch (err) {
-  //     toast.error(err?.data?.message || "Failed to delete metal");
-  //   }
-  // };
-
   const handleClose = () => {
     setOpen(false);
     setEditingMetal(null);
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8f8] p-6">
+    <div className="min-h-screen bg-white">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-[22px] font-semibold text-[#111827]">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
             Metal Prices
           </h1>
-          <p className="text-sm text-[#6B7280] mt-1">
+          <p className="text-gray-500 mt-1">
             Manage scrap metal prices and rates
           </p>
         </div>

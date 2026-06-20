@@ -192,9 +192,9 @@ export default function RequestOrder() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f8f8] p-6">
+    <div className="min-h-screen bg-white">
       <div className="mb-5">
-        <h1 className="text-[22px] font-semibold text-[#111827]">
+        <h1 className="text-3xl font-semibold text-[#111827]">
           Quote Requests
         </h1>
         <p className="text-sm text-[#6B7280] mt-1">

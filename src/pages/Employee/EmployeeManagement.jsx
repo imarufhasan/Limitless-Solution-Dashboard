@@ -273,11 +273,11 @@ export default function EmployeeManagement() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8f8f8] p-4 md:p-6">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="flex items-start justify-between mb-5">
         <div>
-          <h1 className="text-[24px] font-semibold text-[#111827]">
+          <h1 className="text-3xl font-semibold text-[#111827]">
             Employees
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">

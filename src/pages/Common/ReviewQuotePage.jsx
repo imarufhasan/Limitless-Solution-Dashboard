@@ -1193,7 +1193,7 @@ export default function ReviewQuotePage() {
   const isVehicle = d.orderType === "Vehicle";
 
   return (
-    <div className="bg-gray-50 px-4 py-6 md:px-8 rounded-lg">
+    <div className="bg-white rounded-lg">
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-4 transition-colors"

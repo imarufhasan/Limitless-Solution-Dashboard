@@ -240,9 +240,9 @@ export default function Order() {
   const statsLoading = isLoading || analyticsLoading;
 
   return (
-    <div className="min-h-screen bg-[#f8f8f8] p-4 md:p-6">
+    <div className="min-h-screen bg-white">
       <div className="mb-5">
-        <h1 className="text-[24px] font-semibold text-[#111827]">Orders</h1>
+        <h1 className="text-3xl font-semibold text-[#111827]">Orders</h1>
         <p className="text-sm text-[#6B7280] mt-1">
           Track and manage all pickup orders
         </p>
