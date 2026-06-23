@@ -946,9 +946,38 @@ function AvailableEmployees({ orderId, onAssigned }) {
                             {isBusy ? "Busy" : "available"}
                           </Tag>
                         </div>
-                        <Text className="text-xs text-gray-400">
-                          {emp.phoneNumber}
-                        </Text>
+                        {/* <div className="flex-1 w-full">
+                          <Text className="text-xs text-gray-400">
+                            {emp.email}
+                          </Text>
+                          <Text className="text-xs text-gray-400">
+                            {emp.phoneNumber}
+                          </Text>
+                        </div> */}
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <MailOutlined
+                            style={{
+                              fontSize: 11,
+                              color: "#9ca3af",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <Text className="text-xs text-gray-400 truncate block">
+                            {emp.email}
+                          </Text>
+                        </div>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <PhoneOutlined
+                            style={{
+                              fontSize: 11,
+                              color: "#9ca3af",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <Text className="text-xs text-gray-400 block">
+                            {emp.phoneNumber}
+                          </Text>
+                        </div>
                       </div>
                     </div>
 

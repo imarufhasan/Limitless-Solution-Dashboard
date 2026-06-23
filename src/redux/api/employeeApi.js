@@ -39,7 +39,7 @@ export const employeeApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Assignment"],
+      invalidatesTags: ["Assignment", "Order"],
     }),
   }),
 });
