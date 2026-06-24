@@ -243,7 +243,7 @@ function VehicleSection({ d }) {
 
 // ─── Materials section ────────────────────────────────────────────────────────
 
-function MaterialsSection({ d }) {
+function MaterialsSection2({ d }) {
   return (
     <SectionCard icon={<BoxPlotOutlined />} title="Material details & pricing">
       <table className="w-full text-sm">
@@ -281,6 +281,93 @@ function MaterialsSection({ d }) {
               ${(d.subTotal ?? 0).toLocaleString()}
             </td>
           </tr>
+        </tfoot>
+      </table>
+    </SectionCard>
+  );
+}
+
+function MaterialsSection({ d }) {
+  const isQuoted = d.status === "qouted" || d.status === "quoted";
+
+  return (
+    <SectionCard icon={<BoxPlotOutlined />} title="Material details & pricing">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-xs text-gray-400 border-b border-gray-100">
+            <th className="text-left pb-2 font-medium">Item</th>
+            <th className="text-center pb-2 font-medium">Qty</th>
+            <th className="text-center pb-2 font-medium">Unit</th>
+            <th className="text-right pb-2 font-medium">Price/unit</th>
+            <th className="text-right pb-2 font-medium">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(d.items ?? []).map((item, i) => (
+            <tr key={i} className="border-b border-gray-50">
+              <td className="py-2.5">
+                <Text className="text-sm font-medium text-gray-800">
+                  {item.name}
+                </Text>
+              </td>
+              <td className="py-2.5 text-center">
+                <Text className="text-sm text-gray-600">{item.quantity}</Text>
+              </td>
+              <td className="py-2.5 text-center">
+                <Text className="text-xs text-gray-400 uppercase">
+                  {item.unit}
+                </Text>
+              </td>
+              <td className="py-2.5 text-right">
+                <Text className="text-sm text-gray-600">
+                  ${item.price.toLocaleString()}
+                </Text>
+              </td>
+              <td className="py-2.5 text-right">
+                <Text className="text-sm font-medium text-gray-800">
+                  ${(item.quantity * item.price).toLocaleString()}
+                </Text>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="border-t border-gray-100">
+            <td colSpan={4} className="pt-3 text-sm font-medium text-gray-800">
+              Materials subtotal
+            </td>
+            <td className="pt-3 text-right text-sm font-semibold text-purple-600">
+              ${(d.subTotal ?? 0).toLocaleString()}
+            </td>
+          </tr>
+
+          {isQuoted && d.qoutedPrice != null && (
+            <tr>
+              <td
+                colSpan={4}
+                className="pt-2 text-sm font-medium text-gray-800"
+              >
+                Quoted price
+              </td>
+              <td className="pt-2 text-right text-sm font-semibold text-purple-600">
+                ${d.qoutedPrice.toLocaleString()}
+              </td>
+            </tr>
+          )}
+
+          {isQuoted && d.totalPrice != null && (
+            <tr>
+              <td
+                colSpan={4}
+                className="pt-2 pb-1 text-sm font-bold text-gray-900"
+              >
+                Total offer
+              </td>
+              <td className="pt-2 pb-1 text-right text-base font-bold text-purple-700">
+                ${d.totalPrice.toLocaleString()}
+              </td>
+            </tr>
+          )}
         </tfoot>
       </table>
     </SectionCard>
@@ -334,7 +421,7 @@ function OfferSummary({ d }) {
           <div className="flex justify-between items-center mb-4">
             <p className="text-white text-sm">Materials total</p>
             <p className="text-white text-sm font-medium">
-              ${(d.subTotal ?? 0).toLocaleString()}
+              ${(d.totalPrice ?? 0).toLocaleString()}
             </p>
           </div>
           <Divider
@@ -345,7 +432,7 @@ function OfferSummary({ d }) {
             className="text-white font-bold"
             style={{ fontSize: 26, lineHeight: 1.2 }}
           >
-            ${(d.subTotal ?? 0).toLocaleString()}
+            ${(d.totalPrice ?? 0).toLocaleString()}
           </p>
         </>
       )}

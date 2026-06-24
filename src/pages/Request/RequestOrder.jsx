@@ -144,7 +144,7 @@ export default function RequestOrder() {
   const formatAmount = (order) =>
     order.orderType === "Vehicle"
       ? `$${(order.totalPrice || 0).toLocaleString()}`
-      : `$${(order.subTotal || 0).toLocaleString()}`;
+      : `$${(order.totalPrice || 0).toLocaleString()}`;
 
   const getActionButton = (order) => {
     if (order.status === "pending") {
