@@ -105,16 +105,15 @@ export default function RequestOrder() {
     return () => clearTimeout(t);
   }, [search]);
 
-  // useEffect(() => {
-  //   setPage(1);
-  // }, [activeTab]);
-
-  const { data, isLoading, isFetching } = useGetAllOrdersQuery({
+const { data, isLoading, isFetching } = useGetAllOrdersQuery(
+  {
     page,
     limit,
     status: statusMap[activeTab],
     searchTerm: debouncedSearch || undefined,
-  });
+  },
+  { refetchOnMountOrArgChange: true } 
+);
 
   const orders = data?.data ?? [];
   const total = data?.meta?.total ?? data?.pagination?.total ?? 0;
