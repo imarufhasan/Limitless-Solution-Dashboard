@@ -9,7 +9,10 @@ import {
   Package,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useGetAllOrdersQuery } from "../../redux/api/orderApi";
+import {
+  useCompleteDropoffOrderMutation,
+  useGetAllOrdersQuery,
+} from "../../redux/api/orderApi";
 import { useNavigate } from "react-router-dom";
 
 const tabs = [
@@ -95,7 +98,10 @@ export default function RequestOrder() {
   const [activeTab, setActiveTab] = useState("all");
   const [page, setPage] = useState(1);
   const limit = 10;
+  const [completingId, setCompletingId] = useState(null);
+
   const [now, setNow] = useState(() => Date.now());
+  const [completeDropoff] = useCompleteDropoffOrderMutation();
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -105,15 +111,15 @@ export default function RequestOrder() {
     return () => clearTimeout(t);
   }, [search]);
 
-const { data, isLoading, isFetching } = useGetAllOrdersQuery(
-  {
-    page,
-    limit,
-    status: statusMap[activeTab],
-    searchTerm: debouncedSearch || undefined,
-  },
-  { refetchOnMountOrArgChange: true } 
-);
+  const { data, isLoading, isFetching } = useGetAllOrdersQuery(
+    {
+      page,
+      limit,
+      status: statusMap[activeTab],
+      searchTerm: debouncedSearch || undefined,
+    },
+    { refetchOnMountOrArgChange: true },
+  );
 
   const orders = data?.data ?? [];
   const total = data?.meta?.total ?? data?.pagination?.total ?? 0;
@@ -146,6 +152,9 @@ const { data, isLoading, isFetching } = useGetAllOrdersQuery(
       : `$${(order.totalPrice || 0).toLocaleString()}`;
 
   const getActionButton = (order) => {
+    if (order.status === "accepted" && order.deliveryType === "drop_off") {
+      return "Complete";
+    }
     if (order.status === "pending") {
       return "Review & Send Offer";
     }
@@ -160,6 +169,9 @@ const { data, isLoading, isFetching } = useGetAllOrdersQuery(
   };
 
   const getActionStyle = (order) => {
+    if (order.status === "accepted" && order.deliveryType === "drop_off") {
+      return "bg-[#10B981] text-white";
+    }
     if (order.status === "pending") {
       return "bg-[#652D8B] text-white";
     }
@@ -187,6 +199,21 @@ const { data, isLoading, isFetching } = useGetAllOrdersQuery(
     if (diff < 60) return `${diff} min ago`;
     if (diff < 1440) return `${Math.floor(diff / 60)} hr ago`;
     return `${Math.floor(diff / 1440)} days ago`;
+  };
+
+  const handleAction = async (order) => {
+    if (order.status === "accepted" && order.deliveryType === "drop_off") {
+      setCompletingId(order.orderId);
+      try {
+        await completeDropoff(order.orderId).unwrap();
+      } catch (err) {
+        console.error("Complete dropoff failed:", err);
+      } finally {
+        setCompletingId(null);
+      }
+      return;
+    }
+    navigate(`/order-details/${order.orderId}?from=request`);
   };
 
   return (
@@ -301,12 +328,34 @@ const { data, isLoading, isFetching } = useGetAllOrdersQuery(
                   {order.attachments?.length || 0} images
                 </div>
                 <button
-                  className={`h-10 px-5 rounded-xl text-sm font-medium transition-opacity hover:opacity-90 ${getActionStyle(order)}`}
-                  onClick={() =>
-                    navigate(`/order-details/${order.orderId}?from=request`)
-                  }
+                  className={`h-10 px-5 rounded-xl text-sm font-medium transition-opacity hover:opacity-90 flex items-center gap-2 ${getActionStyle(order)}`}
+                  disabled={completingId === order.orderId}
+                  onClick={() => handleAction(order)}
                 >
-                  {getActionButton(order)}
+                  {completingId === order.orderId ? (
+                    <svg
+                      className="animate-spin h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8z"
+                      />
+                    </svg>
+                  ) : null}
+                  {completingId === order.orderId
+                    ? "Completing..."
+                    : getActionButton(order)}
                 </button>
               </div>
             </div>

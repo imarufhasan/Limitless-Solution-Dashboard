@@ -36,6 +36,13 @@ export const orderApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Order"],
     }),
+    completeDropoffOrder: builder.mutation({
+      query: (id) => ({
+        url: `/order/complete/dropoff/${id}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Order"],
+    }),
   }),
 });
 
@@ -45,4 +52,5 @@ export const {
   useGetOrderByIdQuery,
   useSendVehicleQuoteMutation,
   useSendMetalQuoteMutation,
+  useCompleteDropoffOrderMutation,
 } = orderApi;
