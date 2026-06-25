@@ -160,11 +160,11 @@ const IndependentChartCard = ({
         </div>
       </div>
 
-      <div className="h-64 w-full">
+      <div className="h-64 w-full min-w-0">
         {loading ? (
           <SkeletonChart />
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={300} minWidth={0}>
             {chartType === "area" ? (
               <AreaChart data={chartData}>
                 <defs>

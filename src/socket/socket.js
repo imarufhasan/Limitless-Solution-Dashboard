@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { baseUrl } from "../redux/constants/data/baseUrl";
+import baseUrl from "../redux/constants/data/baseUrl";
 
 let socket = null;
 

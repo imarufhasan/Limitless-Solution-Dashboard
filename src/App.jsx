@@ -23,6 +23,8 @@ import Messages from "./pages/Messages";
 import ReviewQuotePage from "./pages/Common/ReviewQuotePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
+  console.log(import.meta.env.VITE_BASE_URL);
+
   return (
     <Router>
       <Routes>
